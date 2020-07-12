@@ -70,8 +70,8 @@ package main;
 	           
 	           
 	           map[4][7].setWhere(test);
-	           map[4][7].setWhere(test2); 
-	           map[4][7].setWhere(test3);
+	           //map[4][7].setWhere(test2); 
+	           //map[4][7].setWhere(test3);
 	           
 	           
 	           
