@@ -6,11 +6,11 @@ public class RabbitObject{
     double color;//0-10:0black:10 white
     double fertility;//0-10
     double speed;//0-10
-    double health;
+    double health;//0-10
     int age;//0-24  1 per turn
     int maxSize=10;//max each grow to
     int size;//current size per age linear with age
-    
+    int turnsmoved;
     
     //not implemented 
     int hunger;
@@ -22,12 +22,13 @@ public class RabbitObject{
         if (x>1)
             setGender("m");
         else setGender("f");
-        setColor(Math.random()*10);
+        setColor((int)Math.random()*10);
         setFertility(0);
-        setSpeed(Math.random()*10);
+        setSpeed((int)Math.random()*10);
         setHealth(10);
         setAge(1);
         setSize(1);
+        turnsmoved =0;
         
     }
     public RabbitObject(RabbitObject femaleParent, RabbitObject maleParent){
@@ -35,15 +36,20 @@ public class RabbitObject{
         setHealth(10);
         setAge(1);
         setSize(1);
+        turnsmoved =0;
     }
     //methods
     public int generateDirection(){
         return (int)(Math.random()*4);
     }
+    public void sim1() {
+    	this.turnsmoved++;
+    }
     
     
-    
-    
+    public int getSims() {
+    	return turnsmoved;
+    }
     
     //Acessors and Mutators
     public double getHealth(){

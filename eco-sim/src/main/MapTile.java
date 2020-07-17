@@ -32,26 +32,36 @@ public class MapTile
     public static void moveRabbits(MapTile[][] map,RabbitObject movingRabbit,int currentX, int currentY, int where){
         if(movingRabbit!=null){
             //hello, do nothing
-            
-            int direction =movingRabbit.generateDirection();
-            //implement speed later
-            int pace =1;
-            if(direction ==0 ||direction==2){//move up or down
-                if(direction==0)
-                    map[currentX+pace][currentY].setWhere(movingRabbit);
-                if(direction==2)
-                    map[currentX-pace][currentY].setWhere(movingRabbit);
-                }  
-            else{//move right or left 
-                if(direction==1)
-                    map[currentX][currentY+pace].setWhere(movingRabbit);
-                if(direction==3)
-                    map[currentX][currentY-pace].setWhere(movingRabbit);    
-            }
+        	boolean moving=true;
+            while(moving) {
+            	int direction =movingRabbit.generateDirection();
+            	//implement speed later
+            	int pace =1;
+            	if(direction ==0 ||direction==2 && currentX+pace<10 && currentX-pace>-1){//move up or down
+            		if(direction==0) {
+            			map[currentX+pace][currentY].setWhere(movingRabbit);
+            			break;
+            		}
+            		if(direction==2) {
+            			map[currentX-pace][currentY].setWhere(movingRabbit);
+            			break;
+            			}
+            		}  
+            	else{//move right or left 
+            		if(direction==1 && currentY+pace<10 && currentY-pace>-1) {
+            			map[currentX][currentY+pace].setWhere(movingRabbit);
+            			break;
+            		}
+            			
+            		if(direction==3&& currentY+pace<10 && currentY-pace>-1) {
+            			map[currentX][currentY-pace].setWhere(movingRabbit);
+            			break;
+            		}
+            	}	
             map[currentX][currentY].moved(where);
+            }
         }
-        
-    }
+    }	
     
     
     //already implemented in method above 

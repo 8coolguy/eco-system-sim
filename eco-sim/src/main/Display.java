@@ -19,7 +19,7 @@ package main;
 	import java.awt.Dimension;//used for screen size
 	import java.awt.Toolkit;//got screen size
 	import javafx.event.*;//events
-
+	
 	public class Display extends Application
 	{
 	   Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();//set to screen size
@@ -29,7 +29,8 @@ package main;
 	    int sizeX =X/10;
 	    int sizeY =Y/10;
 	   
-	   
+	   int moveNum =0;
+	    
 	   final static int ROWS =10;//rows and columns for the map 
 	   final static int COLUMNS =10;
 	   
@@ -64,25 +65,22 @@ package main;
 	           
 	           
 	           
-	           RabbitObject test =new RabbitObject();
-	           RabbitObject test2 =new RabbitObject();
-	           RabbitObject test3 =new RabbitObject();
+	           RabbitObject parent1 =new RabbitObject();
+	           RabbitObject parent2 =new RabbitObject();
+
 	           
 	           
-	           map[4][7].setWhere(test);
-	           //map[4][7].setWhere(test2); 
-	           //map[4][7].setWhere(test3);
+	           map[4][7].setWhere(parent1);
+	           map[4][7].setWhere(parent2);
 	           
-	           
-	           
-	           
+       
 	           
 	           //draw the rabbit 
 	           ImageView[][][] rabbitIcon =new ImageView[ROWS][COLUMNS][4];;
 
 	           
 	           placeRabbits(baseLayer,map,rabbitIcon);
-	          // rabbitIcon[0][11].setVisible(true);
+	          
 	           //initilaize the button
 	           
 	           Button simulateButton =new Button("Simulate");
@@ -100,8 +98,8 @@ package main;
 	           
 	           simulateButton.setOnAction(new EventHandler<ActionEvent>(){
 	                        public void handle( ActionEvent event){
-	                            Display.movedRabbits(map,rabbitIcon);
-	                             
+	                        	moveNum++;
+	                            Display.movedRabbits(map,rabbitIcon,moveNum);
 	                            stage.show();
 	                            
 	                        }
@@ -121,21 +119,36 @@ package main;
 	        
 	        
 	   //methods
-	   public static void movedRabbits(MapTile[][] map, ImageView[][][] rabbitMap){
+	   // this method updates the screen AFTER  the rabbits have been moved 
+	   public static void movedRabbits(MapTile[][] map, ImageView[][][] rabbitMap,int moveNum){
+		   for(int row =0;row<map.length;row++){//traversing through rows
+	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
+	               RabbitObject[] rabbitsHere=map[row][column].showWhere();
+	               for(int where =0;where<rabbitsHere.length;where++){
+	                   RabbitObject movingRabbit =rabbitsHere[where];
+	                	   if(movingRabbit!=null && movingRabbit.getSims()!=moveNum){
+	                		   MapTile.moveRabbits(map, movingRabbit, row, column, where);
+	                		   map[row][column].moved(where);
+	                		   movingRabbit.sim1();
+	                	   }
+	                	
+	               }
+	            }
+	        }
+	    
 	        for(int row =0;row<map.length;row++){//traversing through rows
 	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
 	               RabbitObject[] rabbitsHere=map[row][column].showWhere();
 	               for(int where =0;where<rabbitsHere.length;where++){
 	                   RabbitObject movingRabbit =rabbitsHere[where];
-	                   if(movingRabbit!=null){
-	                       MapTile.moveRabbits(map,movingRabbit,row,column,where);
-	                       rabbitMap[row][column][where].setVisible(true);
-	                    }
-	                    else{
-	                     rabbitMap[row][column][where].setVisible(false);
-	                     
-	                    }
-	                }
+	                	   if(movingRabbit!=null){               		   
+	                		   rabbitMap[row][column][where].setVisible(true);
+	                	   }
+	                	   else if (movingRabbit ==null){
+	                		   rabbitMap[row][column][where].setVisible(false);
+	                	   }
+	                   
+	               }
 	            }
 	        }
 	    }
@@ -183,6 +196,7 @@ package main;
 	            } 
 	       }
 	   }
+	   
 	   public void drawMap(Pane layer,MapTile[][] map){
 	       Rectangle[][] drawnMap = new Rectangle[ROWS][COLUMNS];
 	       for(int row =0;row<map.length;row++){
