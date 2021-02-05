@@ -33,35 +33,36 @@ public class MapTile
         if(movingRabbit!=null){
             //hello, do nothing
         	boolean moving=true;
-            while(moving) {
-            	int direction =movingRabbit.generateDirection();
+           
+            	int direction =movingRabbit.generateDirection(currentX,currentY);
+            	System.out.println(movingRabbit.getGender());
             	//implement speed later
             	int pace =1;
-            	if(direction ==0 ||direction==2 && currentX+pace<10 && currentX-pace>-1){//move up or down
-            		if(direction==0) {
-            			map[currentX+pace][currentY].setWhere(movingRabbit);
-            			break;
-            		}
-            		if(direction==2) {
-            			map[currentX-pace][currentY].setWhere(movingRabbit);
-            			break;
-            			}
-            		}  
-            	else{//move right or left 
-            		if(direction==1 && currentY+pace<10 && currentY-pace>-1) {
-            			map[currentX][currentY+pace].setWhere(movingRabbit);
-            			break;
-            		}
-            			
-            		if(direction==3&& currentY+pace<10 && currentY-pace>-1) {
-            			map[currentX][currentY-pace].setWhere(movingRabbit);
-            			break;
-            		}
-            	}	
+            	if(direction==0) {//right0
+            		map[currentX+pace][currentY].setWhere(movingRabbit);
+            		System.out.println(currentX+" "+currentY);
+            		moving =false;
+            	}
+            	if(direction==2 ) {//left2
+            		map[currentX-pace][currentY].setWhere(movingRabbit);
+            		System.out.println(currentX+" "+currentY);
+            		moving =false;
+            	}  
+            	if(direction==1 ) {//down1
+            		map[currentX][currentY+pace].setWhere(movingRabbit);
+            		System.out.println(currentX+" "+currentY);
+            		moving =false;
+            	}		
+            	if(direction==3) {//up3
+            		map[currentX][currentY-pace].setWhere(movingRabbit);
+            		System.out.println(currentX+" "+currentY);
+            		moving =false;
+            	}
+            	
             map[currentX][currentY].moved(where);
             }
         }
-    }	
+    	
     
     
     //already implemented in method above 
@@ -85,7 +86,7 @@ public class MapTile
         for(int i=0;i<this.here.length;i++){
             if(this.here[i]==null){
                 this.here[i]=where;
-                i=5;
+                break;
             }
         }
     }

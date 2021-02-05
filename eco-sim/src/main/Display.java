@@ -70,8 +70,8 @@ package main;
 
 	           
 	           
-	           map[4][7].setWhere(parent1);
-	           map[4][7].setWhere(parent2);
+	           map[9][9].setWhere(parent1);
+	           map[9][9].setWhere(parent2);
 	           
        
 	           
@@ -98,10 +98,17 @@ package main;
 	           
 	           simulateButton.setOnAction(new EventHandler<ActionEvent>(){
 	                        public void handle( ActionEvent event){
-	                        	moveNum++;
-	                            Display.movedRabbits(map,rabbitIcon,moveNum);
-	                            stage.show();
-	                            
+	                        	for(int i =0; i<1000;i++) {
+	                        		moveNum++;
+	                        		Display.movedRabbits(map,rabbitIcon,moveNum);
+	                        		stage.show();
+	                        		try {
+										Thread.sleep(10);
+									} catch (InterruptedException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+	                        	}
 	                        }
 	                    }
 	                    );

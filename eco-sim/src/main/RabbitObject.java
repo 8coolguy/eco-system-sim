@@ -39,8 +39,55 @@ public class RabbitObject{
         turnsmoved =0;
     }
     //methods
-    public int generateDirection(){
-        return (int)(Math.random()*4);
+    public int generateDirection(int x, int y){
+    	if (x==9 && y ==9){ 
+    	//go in diretion 2 or 3
+    		return (int)(Math.random()*2)+2;
+    	}
+    	else if(x==0 && y==0) {
+    	//go in direction 1 or 0
+    		return (int)(Math.random()*2);
+    	}
+    	else if(x==9&& y==0 ) {
+    	//12
+    		return (int)(Math.random()*2)+1;
+    	}
+    	else if(x==0&&y==9) {
+    	//03
+    		int s=(int)(Math.random()*2);
+    		if(s==1)
+    			return 3;
+    		else 
+    			return s;
+    	}
+    	else if (x==0) {
+    		//013
+    		int s=(int)(Math.random()*3);
+    		if(s==2)
+    			return 3;
+    		else 
+    			return s;
+    	}
+    	else if(x==9) {
+    		//213
+    		return ((int)(Math.random()*3))+1;
+    	}
+    	else if(y==0) {
+    		//021
+    		return((int)(Math.random()*3));
+    	}
+    	else if(y==9) {
+    		//320
+    		int m =((int)(Math.random()*3));
+    		if(m==1) {
+    			return 3;
+    		}else {
+    			return m;
+    		}
+    	}
+    	else 
+    		return (int)(Math.random()*4);
+    		
     }
     public void sim1() {
     	this.turnsmoved++;
