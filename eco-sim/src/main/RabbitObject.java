@@ -1,12 +1,14 @@
 package main;
 
+import javafx.scene.paint.Color;
+
 public class RabbitObject{
     //instance variables for the object rabbit
     String gender = new String();//m or f
     double color;//0-10:0black:10 white
     double fertility;//0-10
     double speed;//0-10
-    double health;//0-10
+    double health=100;//0-100
     int age;//0-24  1 per turn
     int maxSize=10;//max each grow to
     int size;//current size per age linear with age
@@ -25,7 +27,7 @@ public class RabbitObject{
         setColor((int)Math.random()*10);
         setFertility(0);
         setSpeed((int)Math.random()*10);
-        setHealth(10);
+        setHealth(0);
         setAge(1);
         setSize(1);
         turnsmoved =0;
@@ -132,8 +134,28 @@ public class RabbitObject{
     public void setSpeed(double newSpeed){
         this.speed=newSpeed;
     }
-    public void setHealth(double newHealth){
-        this.health =newHealth;
+    public void setHealth(double subtracted){
+    	this.health=this.health-subtracted;
+    }
+    public void reactMove(Color tile) {
+    	if(tile == Color.BLUE) {
+    		this.setHealth(-10);
+    	} 
+    	else if(tile ==Color.RED) {
+    		
+    	}
+    	else if(tile==Color.YELLOW) {
+    		this.setHealth(30);
+    	}
+    	else if(tile ==Color.ORANGE) {
+    		this.setHealth(50);
+    	}
+    	else if(tile==Color.PURPLE) {
+    		this.setHealth(70);
+    	}
+    	else {
+    		this.setHealth(0);
+    	}
     }
     public void setAge(int newAge){
         this.age=newAge;

@@ -1,6 +1,6 @@
 package main;
 
-import javafx.scene.paint.Paint;
+
 import javafx.scene.paint.Color;
 public class MapTile
 {
@@ -8,6 +8,12 @@ public class MapTile
     final int MAX_PER_TILE =4;
     Color[] features ={Color.BLUE,Color.RED,Color.YELLOW,Color.GREEN,Color.ORANGE,Color.PURPLE};
     
+    // rabbits in blue have their health filled up by 10
+    //rabbits in red lose all heath and die
+    //rabbits in yellow loose 30
+    //rabbits in orange lose 50
+    //rabbits in purple loose 70
+    //rabbits in green loose zero
     RabbitObject[] here =new RabbitObject[MAX_PER_TILE];
     // burner variable
     int x;
@@ -35,27 +41,27 @@ public class MapTile
         	boolean moving=true;
            
             	int direction =movingRabbit.generateDirection(currentX,currentY);
-            	System.out.println(movingRabbit.getGender());
+            	//System.out.println(movingRabbit.getGender());
             	//implement speed later
             	int pace =1;
             	if(direction==0) {//right0
             		map[currentX+pace][currentY].setWhere(movingRabbit);
-            		System.out.println(currentX+" "+currentY);
+            		//System.out.println(currentX+" "+currentY);
             		moving =false;
             	}
             	if(direction==2 ) {//left2
             		map[currentX-pace][currentY].setWhere(movingRabbit);
-            		System.out.println(currentX+" "+currentY);
+            		//System.out.println(currentX+" "+currentY);
             		moving =false;
             	}  
             	if(direction==1 ) {//down1
             		map[currentX][currentY+pace].setWhere(movingRabbit);
-            		System.out.println(currentX+" "+currentY);
+            		//System.out.println(currentX+" "+currentY);
             		moving =false;
             	}		
             	if(direction==3) {//up3
             		map[currentX][currentY-pace].setWhere(movingRabbit);
-            		System.out.println(currentX+" "+currentY);
+            		//System.out.println(currentX+" "+currentY);
             		moving =false;
             	}
             	
