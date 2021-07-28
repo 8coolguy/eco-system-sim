@@ -61,7 +61,7 @@ public class Perlin{
 	    n0 = dotGridGrad(x0, y1, x, y);
 	    n1 = dotGridGrad(x1, y1, x, y);
 	    ix1 = interpolate(n0, n1, sx);
-	    System.out.println(sy);
+	    
 	    value = interpolate(ix0, ix1, sy);
 	    return value;
 	}

@@ -21,7 +21,7 @@ public class RabbitObject{
     //not implemented 
     int hunger;
     double speed;//0-10
-    
+    int hydration =0;
     //default contructor for intial rabbit object
     public RabbitObject(){
     	//this.id =setId();
@@ -47,7 +47,7 @@ public class RabbitObject{
     	this.dad =maleParent; 
     	this.turnsmoved =moveNum;
     	this.gen =Math.max(femaleParent.gen,maleParent.gen) +1;
-    	System.out.print(this.getSims()+"-----------"+this.turnsmoved);
+    	
         //set the features based on parents
     	double x =Math.random()*2;
         if (x>1)
@@ -122,7 +122,11 @@ public class RabbitObject{
     	this.turnsmoved++;
     	this.age++;
     	this.reactMove(tile);
-    	//System.out.println(this.age);
+    	if(tile!=Color.BLUE)
+    		this.hydration++;
+    	else
+    		this.hydration =0;
+    	
     	
     }
     
@@ -185,7 +189,6 @@ public class RabbitObject{
     		this.setHealth(15);
     	}
     }
-
     public void setSize(int newSize){
         this.size=newSize;
     }
@@ -204,6 +207,10 @@ public class RabbitObject{
     	
     	if(this.age >randLife) {
     		System.out.println("Died from Age");
+    		return false;
+    	}
+    	if(this.hydration==10) {
+    		System.out.println("Died from Hydration.");
     		return false;
     	}
     	return true;
