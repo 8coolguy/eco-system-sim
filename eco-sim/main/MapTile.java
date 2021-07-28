@@ -1,12 +1,14 @@
 package main;
 
 
+import java.util.Random;
+
 import javafx.scene.paint.Color;
 public class MapTile
 {
     Color tileFeature;//colors will be features:blue water,red dead zone, yellow dead grass,green fresh grass,orange dessert, purple cold tundra,
     final int MAX_PER_TILE =4;
-    Color[] features ={Color.BLUE,Color.RED,Color.YELLOW,Color.GREEN,Color.ORANGE,Color.PURPLE};
+    Color[] features ={Color.RED,Color.BLUE,Color.GREEN,Color.YELLOW,Color.WHITE};
     
     // rabbits in blue have their health filled up by 10
     //rabbits in red lose all heath and die
@@ -16,11 +18,13 @@ public class MapTile
     //rabbits in green loose zero
     RabbitObject[] here =new RabbitObject[MAX_PER_TILE];
     // burner variable
-    int x;
+    double seed;
     
     
-    public MapTile(){
-        setTileFeature(features[(int)(Math.random()*5+.5)]);//generate random land feature  
+    public MapTile(int row,int column,double seed){
+    	this.seed =seed;
+    	setTileFeature(features[(int)(((Perlin.perlin((float)(row*seed),(float)(column*seed))+1)/2)*features.length)]);
+        //setTileFeature(features[(int)(Math.random()*5+.5)]);//generate random land feature  
         here[0] =null;
         here[1]=null;
         here[2]=null;

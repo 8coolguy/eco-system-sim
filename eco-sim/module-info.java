@@ -7,5 +7,14 @@ module libs {
 	requires javafx.swing;
 	requires javafx.swt;
 	requires javafx.web;
+	requires hamcrest.core;
+	requires jcommon;
+	requires jfreechart;
+	requires jfreesvg;
+	requires junit;
+	requires orsoncharts;
+	requires orsonpdf;
+	requires servlet;
+	requires swtgraphics2d;
 	exports main;
 }

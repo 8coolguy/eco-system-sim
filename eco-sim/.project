@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>rabbitIcon.png</name>
+			<type>1</type>
+			<location>C:/Users/arnav/Documents/GitHub/econ-Sim/eco-sim/main/rabbitIcon.png</location>
+		</link>
+	</linkedResources>
 </projectDescription>

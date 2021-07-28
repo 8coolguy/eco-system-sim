@@ -6,39 +6,65 @@ public class RabbitObject{
     //instance variables for the object rabbit
     String gender = new String();//m or f
     double color;//0-10:0black:10 white
-    double fertility;//0-10
-    double speed;//0-10
-    double health=100;//0-100
+    double fertility;//0-1
+    
+    double health=50;//0-100 starting health goes here
     int age;//0-24  1 per turn
     int maxSize=10;//max each grow to
     int size;//current size per age linear with age
     int turnsmoved;
+    public int gen =0;
+    
+    RabbitObject mom;
+    RabbitObject dad; 
     
     //not implemented 
     int hunger;
-    
+    double speed;//0-10
     
     //default contructor for intial rabbit object
     public RabbitObject(){
+    	//this.id =setId();
         double x =Math.random()*2;
         if (x>1)
             setGender("m");
         else setGender("f");
         setColor((int)Math.random()*10);
-        setFertility(0);
+        setFertility(.5);
         setSpeed((int)Math.random()*10);
-        setHealth(0);
-        setAge(1);
+        
+
         setSize(1);
         turnsmoved =0;
+        this.mom=null;
+        this.dad =null;
         
     }
-    public RabbitObject(RabbitObject femaleParent, RabbitObject maleParent){
+
+	public RabbitObject(RabbitObject femaleParent, RabbitObject maleParent,int moveNum){
+    	
+    	this.mom =femaleParent;
+    	this.dad =maleParent; 
+    	this.turnsmoved =moveNum;
+    	this.gen =Math.max(femaleParent.gen,maleParent.gen) +1;
+    	System.out.print(this.getSims()+"-----------"+this.turnsmoved);
         //set the features based on parents
-        setHealth(10);
-        setAge(1);
+    	double x =Math.random()*2;
+        if (x>1)
+            setGender("m");
+        else setGender("f");
+        x =Math.random()*2;
+        setFertility(.75);
+        if(x>1)
+        	setColor(femaleParent.getColor());
+        else setColor(maleParent.getColor());
+        
+        
+        //size needs to be based on the genetics 
+        
+
         setSize(1);
-        turnsmoved =0;
+        
     }
     //methods
     public int generateDirection(int x, int y){
@@ -91,8 +117,13 @@ public class RabbitObject{
     		return (int)(Math.random()*4);
     		
     }
-    public void sim1() {
+
+    public void sim1(Color tile) {
     	this.turnsmoved++;
+    	this.age++;
+    	this.reactMove(tile);
+    	//System.out.println(this.age);
+    	
     }
     
     
@@ -138,29 +169,45 @@ public class RabbitObject{
     	this.health=this.health-subtracted;
     }
     public void reactMove(Color tile) {
-    	if(tile == Color.BLUE) {
-    		this.setHealth(-10);
+    	if(tile == Color.GREEN) {
+    		this.setHealth(0);
     	} 
     	else if(tile ==Color.RED) {
-    		
+    		this.setHealth(this.health);
     	}
     	else if(tile==Color.YELLOW) {
-    		this.setHealth(30);
+    		this.setHealth(7);
     	}
-    	else if(tile ==Color.ORANGE) {
-    		this.setHealth(50);
+    	else if(tile==Color.WHITE) {
+    		this.setHealth(10);
     	}
-    	else if(tile==Color.PURPLE) {
-    		this.setHealth(70);
-    	}
-    	else {
-    		this.setHealth(0);
+    	else if(tile ==Color.BLUE) {
+    		this.setHealth(15);
     	}
     }
-    public void setAge(int newAge){
-        this.age=newAge;
-    }
+
     public void setSize(int newSize){
         this.size=newSize;
+    }
+    public RabbitObject getMom() {
+    	return this.mom;
+    }
+    public RabbitObject getDad() {
+    	return this.dad; 
+    }
+    public boolean isAlive() {
+    	if(this.health <=0) {
+    		System.out.println("Died from health");
+    		return false;
+    	}
+    	int randLife = (int)(Math.random()*70)+30;
+    	
+    	if(this.age >randLife) {
+    		System.out.println("Died from Age");
+    		return false;
+    	}
+    	return true;
+    	
+    
     }
 }

@@ -64,14 +64,19 @@ package main;
 	           //instantiate rabbtis on array
 	           
 	           
-	           
-	           RabbitObject parent1 =new RabbitObject();
-	           RabbitObject parent2 =new RabbitObject();
+	           int numOfRabbits =(int)(Math.random()*15)+10;
+	           System.out.println(numOfRabbits);
+	           for(int i=0;i<numOfRabbits;i++) {
+	        	   RabbitObject parent1 =new RabbitObject();
+	        	   int x =(int)(Math.random()*9);	
+	        	   int y =(int)(Math.random()*9);
+	        	   map[x][y].setWhere(parent1);
+	           }
 
 	           
 	           
-	           map[9][9].setWhere(parent1);
-	           map[9][9].setWhere(parent2);
+	           
+	           
 	           
        
 	           
@@ -85,10 +90,17 @@ package main;
 	           
 	           Button simulateButton =new Button("Simulate");
 	           
-	           simulateButton.setLayoutX(X/2);
+	           simulateButton.setLayoutX(X/2); 
 	           
 	           simulateButton.setLayoutY(Y/20);
 	           
+	           Button simulate100Button =new Button("Simulate 100 times");
+	           
+	           simulate100Button.setLayoutX(X/2);
+	           
+	           simulate100Button.setLayoutY(Y/13);
+	           
+	           baseLayer.getChildren().addAll(simulate100Button);
 	           
 	           baseLayer.getChildren().addAll(simulateButton);
 
@@ -112,56 +124,94 @@ package main;
 	                        }
 	                    }
 	                    );
+	           simulate100Button.setOnAction(new EventHandler<ActionEvent>(){
+                   public void handle( ActionEvent event){
+                	   for(int i=0;i<100; i++){
+                		   moveNum++;
+                		   Display.movedRabbits(map,rabbitIcon,moveNum);
+                		   stage.show();
+                		
+                	   }
+
+                	   
+                   	
+                   }
+               }
+               );
 	        
 	        }
 	    
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
+
 	        
 	   //methods
 	   // this method updates the screen AFTER  the rabbits have been moved 
+	   // this function also will update the data and stats that are created
 	   public static void movedRabbits(MapTile[][] map, ImageView[][][] rabbitMap,int moveNum){
+		   //System.out.println(moveNum);
 		   for(int row =0;row<map.length;row++){//traversing through rows
 	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
-	               RabbitObject[] rabbitsHere=map[row][column].showWhere();
-	               for(int where =0;where<rabbitsHere.length;where++){
-	                   RabbitObject movingRabbit =rabbitsHere[where];
-	                	   if(movingRabbit!=null && movingRabbit.getSims()!=moveNum){
+	        	   RabbitObject[] rabbitsHere=map[row][column].showWhere();
+	               createOffspring(map,rabbitsHere,row,column,moveNum);
+	               
+	               
+	               for(int where =0;where<rabbitsHere.length;where++) {
+	            	   RabbitObject movingRabbit =rabbitsHere[where];
+	              
+	                   //got to make sure the sim number is 1 behind the move num so im not moving something twice 
+	                   if(movingRabbit!=null && movingRabbit.getSims()==moveNum-1){
+	                	   //simulating each rabbit
+	                	   movingRabbit.sim1(map[row][column].getTileFeature());
+	                	   if(!movingRabbit.isAlive()) {
+	                		   rabbitsHere[where] =null;
+	                	   }else {
 	                		   MapTile.moveRabbits(map, movingRabbit, row, column, where);
 	                		   map[row][column].moved(where);
-	                		   movingRabbit.sim1();
-	                	   }
-	                	
+	                	   } 
+	                   }	
 	               }
+	               
+	               
 	            }
 	        }
-	    
+		   //when displaying the rabbits i can take their stats
+		   int rabbitCount =0;
+		   int mvf =0;
 	        for(int row =0;row<map.length;row++){//traversing through rows
 	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
 	               RabbitObject[] rabbitsHere=map[row][column].showWhere();
 	               for(int where =0;where<rabbitsHere.length;where++){
-	                   RabbitObject movingRabbit =rabbitsHere[where];
-	                	   if(movingRabbit!=null){               		   
+	                   
+	            	   
+	            	   RabbitObject movingRabbit =rabbitsHere[where];
+	                	   if(movingRabbit!=null){
+	                		   rabbitCount++;
+	                		   if(movingRabbit.getGender()=="m") {
+	                			   mvf+=1;
+	                		   }
+	                		   
+	                		   
 	                		   rabbitMap[row][column][where].setVisible(true);
 	                	   }
 	                	   else if (movingRabbit ==null){
 	                		   rabbitMap[row][column][where].setVisible(false);
 	                	   }
 	                   
+	                	   
+	                	   
+	                	   
 	               }
 	            }
 	        }
+	        System.out.println("Rabbit Count: "+ rabbitCount);
+	        System.out.println("Male/Female Percentage: "+(double)mvf/(double)rabbitCount+"/"+((double)1-(double)mvf/(double)rabbitCount));
 	    }
+	   
+	   //placing the rabbits at the start of the program
 	   public void placeRabbits(Pane baseLayer,MapTile[][] map,ImageView[][][] rabbitIcon){
 	       for(int row =0;row<map.length;row++){//traversing through rows
 	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
+	        	   
+	        	   
 	               RabbitObject[] rabbitsHere=map[row][column].showWhere();
 	               for(int where =0;where<4;where++){
 	                       RabbitObject movingRabbit =rabbitsHere[where];
@@ -203,29 +253,70 @@ package main;
 	            } 
 	       }
 	   }
-	   
+
+	   // drew the map on the screen on start up
 	   public void drawMap(Pane layer,MapTile[][] map){
 	       Rectangle[][] drawnMap = new Rectangle[ROWS][COLUMNS];
 	       for(int row =0;row<map.length;row++){
+	    	   System.out.println("");
 	           for(int column=0;column<map[row].length;column++){
 	               Rectangle tile =new Rectangle((X/ROWS)*row,(Y/COLUMNS)*column,X  /ROWS,Y/COLUMNS);
 	               drawnMap[row][column] =tile;
 	               tile.setFill(map[row][column].getTileFeature());
 	               tile.setStroke(Color.rgb(0,0,0));
 	               layer.getChildren().addAll(tile);
+	               //System.out.print(row+" "+column);
+	               
+	                
 	           }
 	       }
 
 	   }
+
+	   ///create a map from a seed based on my perlin function 
 	   public static MapTile[][] instantiateMap(){
-	       //create map
+	       
+		   double seed =Math.random();
 	       MapTile[][] map =new MapTile[ROWS][COLUMNS];
 	       for(int row =0;row<map.length;row++){
 	            for(int column=0;column<map[row].length;column++){
-	                map[row][column]= new MapTile();
+	                map[row][column]= new MapTile(row,column,seed);
 	            }
 	       }
 	       return map;
+	   }
+	   
+	   // need to make sure it doesnt repro with itself and with the opposite gender and the both need to want to reproduce
+	   public static void createOffspring(MapTile[][] map,RabbitObject[] rabbits, int row, int column,int moveNum) {
+		   //System.out.println(moveNum);
+		   for(int i =0; i<rabbits.length;i++) {
+			   if(rabbits[i] !=null) {
+				   for(int j =0;j<rabbits.length;j++) {
+					   if(rabbits[j] !=null && i !=j ) {
+						   if((rabbits[j].getGender()!=rabbits[i].getGender()) && Math.random() < rabbits[i].getFertility()*rabbits[j].getFertility()) {
+							   RabbitObject child;
+							   if(rabbits[i].getGender() == "m") 
+							   {
+
+								   child =new RabbitObject(rabbits[j],rabbits[i],moveNum);
+									   
+							   }
+							   else {
+								   child =new RabbitObject(rabbits[i],rabbits[j],moveNum);
+								   
+							   }
+							   map[row][column].setWhere(child);
+							   System.out.println("New Rabbit Child");
+							   return;
+							   
+						   }
+						   else {
+							   
+						   }
+					   }
+				   }
+			   }
+		   }
 	   }
 	}
 
