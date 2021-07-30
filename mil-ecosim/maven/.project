@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>eco-sim</name>
+	<name>maven</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -10,13 +10,19 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
 	<linkedResources>
 		<link>
-			<name>rabbitIcon.png</name>
+			<name>src/main/java/rabbitIcon.png</name>
 			<type>1</type>
 			<location>C:/Users/arnav/Documents/GitHub/econ-Sim/eco-sim/main/rabbitIcon.png</location>
 		</link>

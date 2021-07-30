@@ -1,9 +1,10 @@
-package main;
+package coolguy.maven;
 
 
 import java.util.Random;
 
 import javafx.scene.paint.Color;
+import coolguy.maven.Perlin;
 public class MapTile
 {
     Color tileFeature;//colors will be features:blue water,red dead zone, yellow dead grass,green fresh grass,orange dessert, purple cold tundra,

@@ -1,4 +1,4 @@
-package main;
+package coolguy.maven;
 
 
 	/*
@@ -18,14 +18,15 @@ package main;
 	import javafx.scene.paint.Color; //colored the rectanagles
 	import java.awt.Dimension;//used for screen size
 	import java.awt.Toolkit;//got screen size
-	import javafx.event.*;//events
+
+import javafx.event.*;//events
+	
 	
 	public class Display extends Application
 	{
 	   Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();//set to screen size
 	   final int X=screenSize.width; //screensize variables
 	   final int Y=screenSize.height;
-	   
 	    int sizeX =X/10;
 	    int sizeY =Y/10;
 	   
@@ -33,7 +34,7 @@ package main;
 	    
 	   final static int ROWS =10;//rows and columns for the map 
 	   final static int COLUMNS =10;
-	   
+	   DynamicPopulationTracker x =new DynamicPopulationTracker("x");
 	   
 	   public static void main(String[]args){
 	        launch(args);//creation of map with for loop and multi dimensional array   
@@ -43,7 +44,7 @@ package main;
 	    
 	    
 	   @Override
-	       public void start(Stage stage) throws Exception{
+	       public void start(final Stage stage) throws Exception{
 	           stage.setTitle("Ecosystem Simulation");
 	       
 	           Pane baseLayer =new Pane();  //pane for everything
@@ -58,7 +59,7 @@ package main;
 	           
 	           //field and draw
 	           
-	           MapTile[][] map =Display.instantiateMap();
+	           final MapTile[][] map =Display.instantiateMap();
 	           
 	           drawMap(baseLayer,map);
 	           //instantiate rabbtis on array
@@ -81,7 +82,7 @@ package main;
        
 	           
 	           //draw the rabbit 
-	           ImageView[][][] rabbitIcon =new ImageView[ROWS][COLUMNS][4];;
+	           final ImageView[][][] rabbitIcon =new ImageView[ROWS][COLUMNS][4];;
 
 	           
 	           placeRabbits(baseLayer,map,rabbitIcon);

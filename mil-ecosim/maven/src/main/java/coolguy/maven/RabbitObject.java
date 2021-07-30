@@ -1,4 +1,4 @@
-package main;
+package coolguy.maven;
 
 import javafx.scene.paint.Color;
 

@@ -1,4 +1,4 @@
-package main;
+package coolguy.maven;
 //This is my implementation of 2d perlin noise function based from the wiki
 //https://en.wikipedia.org/wiki/Perlin_noise
 //i pretty much just ctrl v the c code;
