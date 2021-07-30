@@ -2,13 +2,16 @@ package coolguy.maven;
 
 import javafx.scene.paint.Color;
 
-public class RabbitObject{
+public class  RabbitObject{
     //instance variables for the object rabbit
+	final int hydrationLimit =15;
+	final int youngestDeath =5;
+	final int ageDeathRange =15;
     String gender = new String();//m or f
     double color;//0-10:0black:10 white
     double fertility;//0-1
     
-    double health=50;//0-100 starting health goes here
+    double health=25;//0-100 starting health goes here
     int age;//0-24  1 per turn
     int maxSize=10;//max each grow to
     int size;//current size per age linear with age
@@ -23,7 +26,7 @@ public class RabbitObject{
     double speed;//0-10
     int hydration =0;
     //default contructor for intial rabbit object
-    public RabbitObject(){
+    public RabbitObject(int moveNum){
     	//this.id =setId();
         double x =Math.random()*2;
         if (x>1)
@@ -35,7 +38,7 @@ public class RabbitObject{
         
 
         setSize(1);
-        turnsmoved =0;
+        this.turnsmoved =moveNum;
         this.mom=null;
         this.dad =null;
         
@@ -67,7 +70,8 @@ public class RabbitObject{
         
     }
     //methods
-    public int generateDirection(int x, int y){
+    public int generateDirection(int x, int y,MapTile[][] map){
+    	//map only needed for super rabbit
     	if (x==9 && y ==9){ 
     	//go in diretion 2 or 3
     		return (int)(Math.random()*2)+2;
@@ -180,13 +184,13 @@ public class RabbitObject{
     		this.setHealth(this.health);
     	}
     	else if(tile==Color.YELLOW) {
-    		this.setHealth(7);
+    		this.setHealth(4);
     	}
     	else if(tile==Color.WHITE) {
-    		this.setHealth(10);
+    		this.setHealth(16);
     	}
     	else if(tile ==Color.BLUE) {
-    		this.setHealth(15);
+    		this.setHealth(7);
     	}
     }
     public void setSize(int newSize){
@@ -198,22 +202,26 @@ public class RabbitObject{
     public RabbitObject getDad() {
     	return this.dad; 
     }
-    public boolean isAlive() {
+    public boolean isAlive(DynamicPopulationTracker x) {
+    	boolean result =true;
     	if(this.health <=0) {
-    		System.out.println("Died from health");
-    		return false;
+    		//infoSystem.out.println("Died from health");
+    		x.health++;
+    		result= false;
     	}
-    	int randLife = (int)(Math.random()*70)+30;
+    	int randLife = (int)(Math.random()*this.ageDeathRange)+this.youngestDeath;
     	
     	if(this.age >randLife) {
-    		System.out.println("Died from Age");
-    		return false;
+    		//infoSystem.out.println("Died from Age");
+    		x.age++;
+    		result= false;
     	}
-    	if(this.hydration==10) {
-    		System.out.println("Died from Hydration.");
-    		return false;
+    	if(this.hydration==this.hydrationLimit) {
+    		x.hydration++;
+    		//infoSystem.out.println("Died from Hydration.");
+    		result= false;
     	}
-    	return true;
+    	return result;
     	
     
     }

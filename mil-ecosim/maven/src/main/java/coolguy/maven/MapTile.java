@@ -20,10 +20,13 @@ public class MapTile
     RabbitObject[] here =new RabbitObject[MAX_PER_TILE];
     // burner variable
     double seed;
-    
+    //seed =.6796; has a intresting seed
+    //Seed:0.6121924212818659 cool seed balanced colior
+    //.5969944649864282
     
     public MapTile(int row,int column,double seed){
     	this.seed =seed;
+    	
     	setTileFeature(features[(int)(((Perlin.perlin((float)(row*seed),(float)(column*seed))+1)/2)*features.length)]);
         //setTileFeature(features[(int)(Math.random()*5+.5)]);//generate random land feature  
         here[0] =null;
@@ -45,28 +48,28 @@ public class MapTile
             //hello, do nothing
         	boolean moving=true;
            
-            	int direction =movingRabbit.generateDirection(currentX,currentY);
-            	//System.out.println(movingRabbit.getGender());
+            	int direction =movingRabbit.generateDirection(currentX,currentY,map);
+            	
             	//implement speed later
             	int pace =1;
             	if(direction==0) {//right0
             		map[currentX+pace][currentY].setWhere(movingRabbit);
-            		//System.out.println(currentX+" "+currentY);
+            		
             		moving =false;
             	}
             	if(direction==2 ) {//left2
             		map[currentX-pace][currentY].setWhere(movingRabbit);
-            		//System.out.println(currentX+" "+currentY);
+            		
             		moving =false;
             	}  
             	if(direction==1 ) {//down1
             		map[currentX][currentY+pace].setWhere(movingRabbit);
-            		//System.out.println(currentX+" "+currentY);
+            		
             		moving =false;
             	}		
             	if(direction==3) {//up3
             		map[currentX][currentY-pace].setWhere(movingRabbit);
-            		//System.out.println(currentX+" "+currentY);
+            		
             		moving =false;
             	}
             	

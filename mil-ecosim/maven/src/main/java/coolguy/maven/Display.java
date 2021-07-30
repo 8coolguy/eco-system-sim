@@ -19,6 +19,8 @@ package coolguy.maven;
 	import java.awt.Dimension;//used for screen size
 	import java.awt.Toolkit;//got screen size
 
+import org.jfree.ui.RefineryUtilities;
+
 import javafx.event.*;//events
 	
 	
@@ -34,10 +36,11 @@ import javafx.event.*;//events
 	    
 	   final static int ROWS =10;//rows and columns for the map 
 	   final static int COLUMNS =10;
-	   DynamicPopulationTracker x =new DynamicPopulationTracker("x");
 	   
+	   static DynamicPopulationTracker popTracker;
 	   public static void main(String[]args){
-	        launch(args);//creation of map with for loop and multi dimensional array   
+		   
+	       launch(args);//creation of map with for loop and multi dimensional array   
 	   }
 	       
 	    
@@ -45,7 +48,13 @@ import javafx.event.*;//events
 	    
 	   @Override
 	       public void start(final Stage stage) throws Exception{
-	           stage.setTitle("Ecosystem Simulation");
+	           
+		   		popTracker =new DynamicPopulationTracker("Population Tracker");
+		   		popTracker.pack();
+		   		popTracker.setVisible(true);
+		   		RefineryUtilities.centerFrameOnScreen(popTracker);
+		   		
+		   		stage.setTitle("Ecosystem Simulation");
 	       
 	           Pane baseLayer =new Pane();  //pane for everything
 	         
@@ -65,10 +74,10 @@ import javafx.event.*;//events
 	           //instantiate rabbtis on array
 	           
 	           
-	           int numOfRabbits =(int)(Math.random()*15)+10;
-	           System.out.println(numOfRabbits);
+	           int numOfRabbits =(int)(Math.random()*15)+15;
+	           System.out.println("Starting Rabbits: "+numOfRabbits);
 	           for(int i=0;i<numOfRabbits;i++) {
-	        	   RabbitObject parent1 =new RabbitObject();
+	        	   RabbitObject parent1 =new RabbitObject(moveNum);
 	        	   int x =(int)(Math.random()*9);	
 	        	   int y =(int)(Math.random()*9);
 	        	   map[x][y].setWhere(parent1);
@@ -88,23 +97,35 @@ import javafx.event.*;//events
 	           placeRabbits(baseLayer,map,rabbitIcon);
 	          
 	           //initilaize the button
+	           final Button restart =new Button("Restart Sim");
 	           
-	           Button simulateButton =new Button("Simulate");
+	           restart.setLayoutX(X/2); 
+	           
+	           final Button simulateButton =new Button("Simulate");
 	           
 	           simulateButton.setLayoutX(X/2); 
 	           
 	           simulateButton.setLayoutY(Y/20);
 	           
-	           Button simulate100Button =new Button("Simulate 100 times");
+	           final Button simulate100Button =new Button("Simulate 100 times");
 	           
 	           simulate100Button.setLayoutX(X/2);
 	           
 	           simulate100Button.setLayoutY(Y/13);
 	           
+	           final Button endless =new Button("Endless");
+	           
+	           endless.setLayoutX(X/2);
+	           
+	           endless.setLayoutY(Y/9);
+	           
+	           baseLayer.getChildren().addAll(restart);
+	           
 	           baseLayer.getChildren().addAll(simulate100Button);
 	           
 	           baseLayer.getChildren().addAll(simulateButton);
 
+	           baseLayer.getChildren().addAll(endless);
 	           //stage
 	           
 	           stage.show();
@@ -139,6 +160,33 @@ import javafx.event.*;//events
                    }
                }
                );
+	           endless.setOnAction(new EventHandler<ActionEvent>(){
+	        	   public void handle(ActionEvent event) {
+	        		   while (true) {
+	        			   moveNum++;
+                		   Display.movedRabbits(map,rabbitIcon,moveNum);
+                		   stage.show();
+                		   
+                		
+	        		   }
+	        	   }
+	           });
+	           restart.setOnAction(new EventHandler<ActionEvent>(){
+	        	   public void handle(ActionEvent event) {
+	        		   //restarts and put more rabbits on board
+	        		   int numOfRabbits =(int)(Math.random()*15)+10;
+	     	           System.out.println("Restarted Rabbits: "+numOfRabbits);
+	     	           for(int i=0;i<numOfRabbits;i++) {
+	     	        	   RabbitObject parent1 =new RabbitObject(moveNum);
+	     	        	   int x =(int)(Math.random()*9);	
+	     	        	   int y =(int)(Math.random()*9);
+	     	        	   map[x][y].setWhere(parent1);
+	     	           }
+	     	          //placeRabbits(baseLayer,map,rabbitIcon);
+
+	        		   
+	        	   }
+	           });
 	        
 	        }
 	    
@@ -148,7 +196,7 @@ import javafx.event.*;//events
 	   // this method updates the screen AFTER  the rabbits have been moved 
 	   // this function also will update the data and stats that are created
 	   public static void movedRabbits(MapTile[][] map, ImageView[][][] rabbitMap,int moveNum){
-		   //System.out.println(moveNum);
+		   
 		   for(int row =0;row<map.length;row++){//traversing through rows
 	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
 	        	   RabbitObject[] rabbitsHere=map[row][column].showWhere();
@@ -162,7 +210,7 @@ import javafx.event.*;//events
 	                   if(movingRabbit!=null && movingRabbit.getSims()==moveNum-1){
 	                	   //simulating each rabbit
 	                	   movingRabbit.sim1(map[row][column].getTileFeature());
-	                	   if(!movingRabbit.isAlive()) {
+	                	   if(!movingRabbit.isAlive(popTracker)) {
 	                		   rabbitsHere[where] =null;
 	                	   }else {
 	                		   MapTile.moveRabbits(map, movingRabbit, row, column, where);
@@ -203,8 +251,9 @@ import javafx.event.*;//events
 	               }
 	            }
 	        }
-	        System.out.println("Rabbit Count: "+ rabbitCount);
-	        System.out.println("Male/Female Percentage: "+(double)mvf/(double)rabbitCount+"/"+((double)1-(double)mvf/(double)rabbitCount));
+	        popTracker.updatePop(moveNum, rabbitCount);
+	        //infoSystem.out.println("Rabbit Count: "+ rabbitCount);
+	        //infoSystem.out.println("Male/Female Percentage: "+(double)mvf/(double)rabbitCount+"/"+((double)1-(double)mvf/(double)rabbitCount));
 	    }
 	   
 	   //placing the rabbits at the start of the program
@@ -259,7 +308,8 @@ import javafx.event.*;//events
 	   public void drawMap(Pane layer,MapTile[][] map){
 	       Rectangle[][] drawnMap = new Rectangle[ROWS][COLUMNS];
 	       for(int row =0;row<map.length;row++){
-	    	   System.out.println("");
+
+	    	   
 	           for(int column=0;column<map[row].length;column++){
 	               Rectangle tile =new Rectangle((X/ROWS)*row,(Y/COLUMNS)*column,X  /ROWS,Y/COLUMNS);
 	               drawnMap[row][column] =tile;
@@ -275,9 +325,12 @@ import javafx.event.*;//events
 	   }
 
 	   ///create a map from a seed based on my perlin function 
+	   //seed info 
+	   //math.random gives ok maps
 	   public static MapTile[][] instantiateMap(){
 	       
 		   double seed =Math.random();
+		   System.out.println("Seed:"+seed);
 	       MapTile[][] map =new MapTile[ROWS][COLUMNS];
 	       for(int row =0;row<map.length;row++){
 	            for(int column=0;column<map[row].length;column++){
@@ -307,7 +360,7 @@ import javafx.event.*;//events
 								   
 							   }
 							   map[row][column].setWhere(child);
-							   System.out.println("New Rabbit Child");
+							   //infoSystem.out.println("New Rabbit Child");
 							   return;
 							   
 						   }
