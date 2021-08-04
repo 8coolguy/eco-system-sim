@@ -19,9 +19,9 @@ package coolguy.maven;
 	import java.awt.Dimension;//used for screen size
 	import java.awt.Toolkit;//got screen size
 
-import org.jfree.ui.RefineryUtilities;
+	import org.jfree.ui.RefineryUtilities;
 
-import javafx.event.*;//events
+	import javafx.event.*;//events
 	
 	
 	public class Display extends Application
@@ -29,13 +29,15 @@ import javafx.event.*;//events
 	   Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();//set to screen size
 	   final int X=screenSize.width; //screensize variables
 	   final int Y=screenSize.height;
-	    int sizeX =X/10;
-	    int sizeY =Y/10;
+	   final static int ROWS =20;//rows and columns for the map 
+	   final static int COLUMNS =20;
+	    int sizeX =X/ROWS;
+	    int sizeY =Y/COLUMNS;
 	   
 	   int moveNum =0;
-	    
-	   final static int ROWS =10;//rows and columns for the map 
-	   final static int COLUMNS =10;
+	   static Image rabbitPic =new Image("rabbitIcon.png");
+	   static Image foxPic =new Image("foxIcon.jpg");
+	  
 	   
 	   static DynamicPopulationTracker popTracker;
 	   public static void main(String[]args){
@@ -45,7 +47,7 @@ import javafx.event.*;//events
 	       
 	    
 	    
-	    
+	    //TODO need to make the tile size adjustable 
 	   @Override
 	       public void start(final Stage stage) throws Exception{
 	           
@@ -71,15 +73,23 @@ import javafx.event.*;//events
 	           final MapTile[][] map =Display.instantiateMap();
 	           
 	           drawMap(baseLayer,map);
-	           //instantiate rabbtis on array
+	           //instantiate rabbtis and foxes on array
 	           
-	           
-	           int numOfRabbits =(int)(Math.random()*15)+15;
+	           //remember thisRabbitObject x = new SuperRabbitObject(moveNum);
+	           int numOfRabbits =(int)(Math.random()*15)+ROWS+COLUMNS;
+	           int numOfFoxes =(int)(Math.random()*10)+ROWS;
 	           System.out.println("Starting Rabbits: "+numOfRabbits);
+	           System.out.println("Starting Foxes: "+numOfFoxes);
+	           for(int i=0;i<numOfFoxes;i++) {
+	        	   FoxObject fox =new FoxObject(moveNum);
+	        	   int x =(int)(Math.random()*ROWS-1);	
+	        	   int y =(int)(Math.random()*COLUMNS-1);
+	        	   map[x][y].setWhere(fox);
+	           }
 	           for(int i=0;i<numOfRabbits;i++) {
 	        	   RabbitObject parent1 =new RabbitObject(moveNum);
-	        	   int x =(int)(Math.random()*9);	
-	        	   int y =(int)(Math.random()*9);
+	        	   int x =(int)(Math.random()*ROWS-1);	
+	        	   int y =(int)(Math.random()*COLUMNS-1);
 	        	   map[x][y].setWhere(parent1);
 	           }
 
@@ -139,7 +149,7 @@ import javafx.event.*;//events
 	                        	try {
 									Thread.sleep(10);
 								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
+									
 									e.printStackTrace();
 								}
 	                        	
@@ -174,15 +184,23 @@ import javafx.event.*;//events
 	           restart.setOnAction(new EventHandler<ActionEvent>(){
 	        	   public void handle(ActionEvent event) {
 	        		   //restarts and put more rabbits on board
-	        		   int numOfRabbits =(int)(Math.random()*15)+10;
-	     	           System.out.println("Restarted Rabbits: "+numOfRabbits);
+	        		   int numOfFoxes =(int)(Math.random()*5)+3;
+	        		   int numOfRabbits =(int)(Math.random()*15)+40;
+	    	           System.out.println("Restarted Rabbits: "+numOfRabbits);
+	    	           System.out.println("Restarted Foxes: "+numOfFoxes);
+	    	           for(int i=0;i<numOfFoxes;i++) {
+	    	        	   FoxObject fox =new FoxObject(moveNum);
+	    	        	   int x =(int)(Math.random()*ROWS-1);	
+	    	        	   int y =(int)(Math.random()*COLUMNS-1);
+	    	        	   map[x][y].setWhere(fox);
+	    	           }
 	     	           for(int i=0;i<numOfRabbits;i++) {
 	     	        	   RabbitObject parent1 =new RabbitObject(moveNum);
 	     	        	   int x =(int)(Math.random()*9);	
 	     	        	   int y =(int)(Math.random()*9);
 	     	        	   map[x][y].setWhere(parent1);
 	     	           }
-	     	          //placeRabbits(baseLayer,map,rabbitIcon);
+	     	          
 
 	        		   
 	        	   }
@@ -205,9 +223,14 @@ import javafx.event.*;//events
 	               
 	               for(int where =0;where<rabbitsHere.length;where++) {
 	            	   RabbitObject movingRabbit =rabbitsHere[where];
-	              
+	            	 
 	                   //got to make sure the sim number is 1 behind the move num so im not moving something twice 
 	                   if(movingRabbit!=null && movingRabbit.getSims()==moveNum-1){
+	                	   if(movingRabbit instanceof FoxObject) {
+	                		   FoxObject temp =(FoxObject)movingRabbit;	
+	                		   temp.eat(map[row][column]);
+	                		   movingRabbit =temp;
+	                	   }
 	                	   //simulating each rabbit
 	                	   movingRabbit.sim1(map[row][column].getTileFeature());
 	                	   if(!movingRabbit.isAlive(popTracker)) {
@@ -224,7 +247,12 @@ import javafx.event.*;//events
 	        }
 		   //when displaying the rabbits i can take their stats
 		   int rabbitCount =0;
-		   int mvf =0;
+		   int cumGen=0;
+		   int foxCount=0;
+		   double fertCum =0;
+		   double colorCum=0;
+		   double speedCum =0;
+		   double sizeCum =0;
 	        for(int row =0;row<map.length;row++){//traversing through rows
 	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
 	               RabbitObject[] rabbitsHere=map[row][column].showWhere();
@@ -232,14 +260,24 @@ import javafx.event.*;//events
 	                   
 	            	   
 	            	   RabbitObject movingRabbit =rabbitsHere[where];
-	                	   if(movingRabbit!=null){
-	                		   rabbitCount++;
-	                		   if(movingRabbit.getGender()=="m") {
-	                			   mvf+=1;
+	                	   if(movingRabbit!=null ){
+	                		   
+	                		   
+	                		   if(movingRabbit instanceof FoxObject) {
+	                			   rabbitMap[row][column][where].setImage(foxPic);
+	                			   foxCount++;
+	                		   }else {
+	                			   rabbitMap[row][column][where].setImage(rabbitPic);
+	                			   rabbitCount++;
+		                		   cumGen+=movingRabbit.gen;
+		                		   fertCum+=movingRabbit.getFertility();
+		                		   colorCum+=movingRabbit.getColor();
+		                		   speedCum+=movingRabbit.getSpeed();
+		                		   sizeCum+=movingRabbit.getSize();
 	                		   }
+		                		   
+		                	   rabbitMap[row][column][where].setVisible(true);
 	                		   
-	                		   
-	                		   rabbitMap[row][column][where].setVisible(true);
 	                	   }
 	                	   else if (movingRabbit ==null){
 	                		   rabbitMap[row][column][where].setVisible(false);
@@ -251,9 +289,15 @@ import javafx.event.*;//events
 	               }
 	            }
 	        }
-	        popTracker.updatePop(moveNum, rabbitCount);
-	        //infoSystem.out.println("Rabbit Count: "+ rabbitCount);
-	        //infoSystem.out.println("Male/Female Percentage: "+(double)mvf/(double)rabbitCount+"/"+((double)1-(double)mvf/(double)rabbitCount));
+	        popTracker.updatePop(moveNum, rabbitCount,foxCount);
+	        System.out.println("-----------------------------------------------------------");
+	        //System.out.println("Rabbit Count: "+ rabbitCount);
+	        //System.out.println("Fox Count: "+ foxCount);
+	        //System.out.println("Average generation: "+(double)cumGen/(double)rabbitCount);
+	        //System.out.println("Average Fertility: "+fertCum/(double)rabbitCount);
+	        System.out.println("Average Color: "+colorCum/(double)rabbitCount);
+	        //System.out.println("Average Size: "+sizeCum/(double)rabbitCount);
+	        //System.out.println("Average Speed: "+speedCum/(double)rabbitCount);
 	    }
 	   
 	   //placing the rabbits at the start of the program
@@ -269,8 +313,8 @@ import javafx.event.*;//events
 	                       rabbitIcon[row][column][where] = new ImageView("rabbitIcon.png");
 	                       
 	                       //scale of the rabit icon
-	                       rabbitIcon[row][column][where].setFitHeight(Y/24);
-	                       rabbitIcon[row][column][where].setFitWidth(X/24);
+	                       rabbitIcon[row][column][where].setFitHeight(Y/(COLUMNS*2));
+	                       rabbitIcon[row][column][where].setFitWidth(X/(ROWS*2));
 	                       
 	                       //position of rabbit icon 
 	                       if(where==0){
@@ -278,16 +322,16 @@ import javafx.event.*;//events
 	                           rabbitIcon[row][column][where].setY(column*(sizeY));
 	                       }    
 	                       else if(where==1){
-	                           rabbitIcon[row][column][where].setX(row*(sizeX)+(X/20));
+	                           rabbitIcon[row][column][where].setX(row*(sizeX)+(X/(ROWS*2)));
 	                           rabbitIcon[row][column][where].setY(column*(sizeY));  
 	                        }
 	                       else if(where==2){
 	                           rabbitIcon[row][column][where].setX(row*(sizeX));
-	                           rabbitIcon[row][column][where].setY(column*(sizeY)+(Y/20));  
+	                           rabbitIcon[row][column][where].setY(column*(sizeY)+(Y/(COLUMNS*2)));  
 	                        }
 	                       else if(where==3){
-	                           rabbitIcon[row][column][where].setX(row*(sizeX)+(X/20));
-	                           rabbitIcon[row][column][where].setY(column*(sizeY)+(Y/20)); 
+	                           rabbitIcon[row][column][where].setX(row*(sizeX)+(X/(ROWS*2)));
+	                           rabbitIcon[row][column][where].setY(column*(sizeY)+(Y/(COLUMNS*2))); 
 	                        }
 	                       if(movingRabbit ==null){
 	                           rabbitIcon[row][column][where].setVisible(false);
@@ -347,21 +391,39 @@ import javafx.event.*;//events
 			   if(rabbits[i] !=null) {
 				   for(int j =0;j<rabbits.length;j++) {
 					   if(rabbits[j] !=null && i !=j ) {
-						   if((rabbits[j].getGender()!=rabbits[i].getGender()) && Math.random() < rabbits[i].getFertility()*rabbits[j].getFertility()) {
+						   if(!(rabbits[j].getGender().equals(rabbits[i].getGender())) && Math.random() < rabbits[i].getFertility()*rabbits[j].getFertility()) {
 							   RabbitObject child;
-							   if(rabbits[i].getGender() == "m") 
-							   {
-
-								   child =new RabbitObject(rabbits[j],rabbits[i],moveNum);
+							   FoxObject foxChild;
+							   if(!(rabbits[i] instanceof FoxObject) && !(rabbits[j] instanceof FoxObject) ) {
+								   if(rabbits[i].getGender() == "m") 
+								   {
+	
+									   child =new RabbitObject(rabbits[j],rabbits[i],moveNum);
+										   
+								   }
+								   else {
+									   child =new RabbitObject(rabbits[i],rabbits[j],moveNum);
 									   
-							   }
-							   else {
-								   child =new RabbitObject(rabbits[i],rabbits[j],moveNum);
+								   }
+								   map[row][column].setWhere(child);
+								   //infoSystem.out.println("New Rabbit Child");
+								   return;
+							   }else if(rabbits[i] instanceof FoxObject && rabbits[j] instanceof FoxObject) {
+								   FoxObject p1=(FoxObject)rabbits[i];
+								   FoxObject p2 =(FoxObject)rabbits[j];
+								   if(rabbits[i].getGender() == "m") 
+								   {
+	
+									   foxChild =new FoxObject(p2,p1,moveNum);
+										   
+								   }
+								   else {
+									   foxChild =new FoxObject(p1,p2,moveNum);
+									   
+								   }
+								   map[row][column].setWhere(foxChild);
 								   
 							   }
-							   map[row][column].setWhere(child);
-							   //infoSystem.out.println("New Rabbit Child");
-							   return;
 							   
 						   }
 						   else {

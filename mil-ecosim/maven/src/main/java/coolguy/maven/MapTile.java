@@ -10,20 +10,13 @@ public class MapTile
     Color tileFeature;//colors will be features:blue water,red dead zone, yellow dead grass,green fresh grass,orange dessert, purple cold tundra,
     final int MAX_PER_TILE =4;
     Color[] features ={Color.RED,Color.BLUE,Color.GREEN,Color.YELLOW,Color.WHITE};
-    
-    // rabbits in blue have their health filled up by 10
-    //rabbits in red lose all heath and die
-    //rabbits in yellow loose 30
-    //rabbits in orange lose 50
-    //rabbits in purple loose 70
-    //rabbits in green loose zero
-    RabbitObject[] here =new RabbitObject[MAX_PER_TILE];
-    // burner variable
+    public RabbitObject[] here =new RabbitObject[MAX_PER_TILE];
     double seed;
     //seed =.6796; has a intresting seed
     //Seed:0.6121924212818659 cool seed balanced colior
     //.5969944649864282
-    
+    //.1473
+    //base constructor
     public MapTile(int row,int column,double seed){
     	this.seed =seed;
     	
@@ -33,16 +26,9 @@ public class MapTile
         here[1]=null;
         here[2]=null;
         here[3]=null;
-    
-    
-    
-    
-    
-    
-    
-    }
-    
+    } 
     //mehtods
+    //moving the rabbits after getting directions 
     public static void moveRabbits(MapTile[][] map,RabbitObject movingRabbit,int currentX, int currentY, int where){
         if(movingRabbit!=null){
             //hello, do nothing
@@ -51,7 +37,7 @@ public class MapTile
             	int direction =movingRabbit.generateDirection(currentX,currentY,map);
             	
             	//implement speed later
-            	int pace =1;
+            	int pace =(int)(movingRabbit.getSpeed());
             	if(direction==0) {//right0
             		map[currentX+pace][currentY].setWhere(movingRabbit);
             		
@@ -75,17 +61,11 @@ public class MapTile
             	
             map[currentX][currentY].moved(where);
             }
-        }
-    	
-    
-    
+        }    
     //already implemented in method above 
     public void moved(int from){
         this.here[from] =null;
     }
-    
-    
-    
     //accesors and mutators
     public Color getTileFeature(){
         return this.tileFeature;

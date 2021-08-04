@@ -35,6 +35,8 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 	XYSeries hydoDeaths;
 	XYSeries ageDeaths;
 	XYSeries heathDeaths;
+	XYSeries deltaPop;
+	XYSeries foxPop;
 	XYSeriesCollection collection;
 	
 	
@@ -46,6 +48,7 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 	int lastHydration =0;
 	int lastAge=0;
 	int lastHealth=0;
+	int lastRabbitCount =0;
 	
 	public DynamicPopulationTracker(String title) {
 		super(title);
@@ -99,19 +102,22 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 		this.hydoDeaths =hydrationDeaths;
 		final XYSeries hDeaths =new XYSeries("Death from enviorment");
 		this.heathDeaths =hDeaths;
-		
-		
+		final XYSeries deltaPop= new XYSeries("Change in Population");
+		this.deltaPop=deltaPop;
+		this.foxPop =new XYSeries("Fox Population");
 		
 		final XYSeriesCollection collection =new XYSeriesCollection();
 		collection.addSeries(population);
 		collection.addSeries(hydrationDeaths);
 		collection.addSeries(hDeaths);
 		collection.addSeries(ageDeaths);
+		collection.addSeries(deltaPop);
+		collection.addSeries(foxPop);
 				
 		return collection;
 	}
 	//i could make this hold less data if wanted
-	public void updatePop(int moveNum,int rabbitCount) {
+	public void updatePop(int moveNum,int rabbitCount,int foxCount) {
 		try {
 			
 			//death stats
@@ -128,11 +134,17 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 			this.ageDeaths.add((double)moveNum,(double)this.lastAge);
 			this.hydoDeaths.add((double)moveNum,(double)this.lastHydration);
 			this.heathDeaths.add((double)moveNum,(double)this.lastHealth);
+			this.deltaPop.add((double)moveNum,(double)(rabbitCount -this.lastRabbitCount));
+			this.foxPop.add((double)moveNum,(double)foxCount);
+			
+			this.lastRabbitCount=rabbitCount;
 			
 			this.collection.addSeries(this.population);
 			this.collection.addSeries(this.hydoDeaths);
 			this.collection.addSeries(this.heathDeaths);
 			this.collection.addSeries(this.ageDeaths);
+			this.collection.addSeries(this.deltaPop);
+			this.collection.addSeries(this.foxPop);
 		} catch(Exception i) {
 			//infoSystem.out.println("Weird Error");
 			}

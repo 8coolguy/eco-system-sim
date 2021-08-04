@@ -22,6 +22,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>src/main/java/foxIcon.jpg</name>
+			<type>1</type>
+			<location>C:/Users/arnav/Documents/GitHub/econ-Sim/mil-ecosim/maven/src/main/java/foxIcon.jpg</location>
+		</link>
+		<link>
 			<name>src/main/java/rabbitIcon.png</name>
 			<type>1</type>
 			<location>C:/Users/arnav/Documents/GitHub/econ-Sim/mil-ecosim/maven/src/main/java/rabbitIcon.png</location>

@@ -4,7 +4,7 @@ public class SuperRabbitObject extends RabbitObject {
 
 	public SuperRabbitObject(int moveNum) {
 		super(moveNum);
-		// TODO Auto-generated constructor stub
+		
 	}
 	public SuperRabbitObject(SuperRabbitObject femaleParent, SuperRabbitObject maleParent,int moveNum) {
 		super(femaleParent, maleParent,moveNum);
