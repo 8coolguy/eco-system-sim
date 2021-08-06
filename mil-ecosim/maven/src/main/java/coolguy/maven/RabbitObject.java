@@ -1,6 +1,10 @@
 package coolguy.maven;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javafx.scene.paint.Color;
+
 //TODO need to finish the genetic traits part
 //TODO need to impement the super rabbit that can make informed descions
 public class  RabbitObject{
@@ -11,7 +15,8 @@ public class  RabbitObject{
 	final int BASE =10;
     String gender = new String();//m or f
     //0-10 color trait will  change how attarctive it is to hunt
-    double health=7;//0-100 starting health goes here
+    int health=7;//0-100 starting health goes here
+    int deltaHealth=0;
     int age;//0-24  1 per turn\
     //inherited properties form parents 
     double color;//0-1
@@ -26,6 +31,11 @@ public class  RabbitObject{
     RabbitObject dad; 
     //no hunger implemented  
     int hydration =0;
+    //tile effects
+    int greenEffect=-1;
+    int yellowEffect = 4;
+    int whiteEffect = 11;
+    int blueEffect =7;
     //default contructor for intial rabbit object
     public RabbitObject(int moveNum){
     	//this.id =setId();
@@ -105,9 +115,14 @@ public class  RabbitObject{
         
     }
     //methods
-    public int generateDirection(int x, int y,MapTile[][] map){
+    public int generateDirection(int x, int y,MapTile[][] map,RabbitLearner ml){
+    	
+    	
+    	
+    	
     	int n =map.length-(int)(this.speed);
     	int m =(int)(this.speed)-1;
+    	int pace=(int)(this.speed);
     	//map only needed for super rabbit
     	if (x>=n && y >=n){ 
     	//go in diretion 2 or 3
@@ -154,9 +169,28 @@ public class  RabbitObject{
     			return s;
     		}
     	}
-    	else 
-    		return (int)(Math.random()*4);
+    	else {
     		
+    		Set<Integer> possibleDirections =new HashSet();
+    		int state=0;
+    		for(int i =0;i<4;i++) {
+    			possibleDirections.add(i);
+    			if(i==0) {
+    				state+=(int)(Math.pow(8, i))*map[x+pace][y].returnBit();
+    			}
+    			else if(i==1) {
+    				state+=(int)(Math.pow(8, i))*map[x][y+pace].returnBit();
+    			}
+    			else if(i==2) {
+    				state+=(int)(Math.pow(8, i))*map[x-pace][y].returnBit();
+    			}else {
+    				state+=(int)(Math.pow(8, i))*map[x][y-pace].returnBit();
+    			}
+    			
+    		}
+    		ml.act(state,possibleDirections);
+    		return (int)(Math.random()*4);
+    	}
     }
     public void sim1(Color tile) {
     	this.turnsmoved++;
@@ -173,7 +207,7 @@ public class  RabbitObject{
     	return turnsmoved;
     }  
     //Acessors and Mutators
-    public double getHealth(){
+    public int getHealth(){
         return this.health;
     }
     public String getGender(){
@@ -206,24 +240,28 @@ public class  RabbitObject{
     public void setSpeed(double newSpeed){
         this.speed=newSpeed;
     }
-    public void setHealth(double subtracted){
+    public void setHealth(int subtracted){
     	this.health=this.health-subtracted;
     }
     public void reactMove(Color tile) {
     	if(tile == Color.GREEN) {
-    		this.setHealth(-1);
+    		this.setHealth(greenEffect);
     	} 
     	else if(tile ==Color.RED) {
     		this.setHealth(this.health);
+    		this.deltaHealth =this.health;
     	}
     	else if(tile==Color.YELLOW) {
-    		this.setHealth(4);
+    		this.setHealth(yellowEffect);
+    		this.deltaHealth =yellowEffect;
     	}
     	else if(tile==Color.WHITE) {
-    		this.setHealth(16);
+    		this.setHealth(whiteEffect);
+    		this.deltaHealth=this.whiteEffect;
     	}
     	else if(tile ==Color.BLUE) {
-    		this.setHealth(7);
+    		this.setHealth(blueEffect);
+    		this.deltaHealth = this.blueEffect;
     	}
     }
     public void setSize(double newSize){

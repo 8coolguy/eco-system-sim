@@ -31,8 +31,8 @@ package coolguy.maven;
 	   final int Y=screenSize.height;
 	   final static int ROWS =20;//rows and columns for the map 
 	   final static int COLUMNS =20;
-	    int sizeX =X/ROWS;
-	    int sizeY =Y/COLUMNS;
+	   int sizeX =X/ROWS;
+	   int sizeY =Y/COLUMNS;
 	   
 	   int moveNum =0;
 	   static Image rabbitPic =new Image("rabbitIcon.png");
@@ -57,6 +57,8 @@ package coolguy.maven;
 		   		RefineryUtilities.centerFrameOnScreen(popTracker);
 		   		
 		   		stage.setTitle("Ecosystem Simulation");
+		   		
+		   		final RabbitLearner ml =new RabbitLearner();
 	       
 	           Pane baseLayer =new Pane();  //pane for everything
 	         
@@ -76,8 +78,8 @@ package coolguy.maven;
 	           //instantiate rabbtis and foxes on array
 	           
 	           //remember thisRabbitObject x = new SuperRabbitObject(moveNum);
-	           int numOfRabbits =(int)(Math.random()*15)+ROWS+COLUMNS;
-	           int numOfFoxes =(int)(Math.random()*10)+ROWS;
+	           int numOfRabbits =(int)(Math.random()*15)+ROWS*COLUMNS;
+	           int numOfFoxes =(int)(Math.random()*10)+(ROWS*COLUMNS)/5;
 	           System.out.println("Starting Rabbits: "+numOfRabbits);
 	           System.out.println("Starting Foxes: "+numOfFoxes);
 	           for(int i=0;i<numOfFoxes;i++) {
@@ -144,7 +146,7 @@ package coolguy.maven;
 	                        public void handle( ActionEvent event){
 	                        
 	                        	moveNum++;
-	                        	Display.movedRabbits(map,rabbitIcon,moveNum);
+	                        	Display.movedRabbits(map,rabbitIcon,moveNum,ml);
 	                        	stage.show();
 	                        	try {
 									Thread.sleep(10);
@@ -160,7 +162,7 @@ package coolguy.maven;
                    public void handle( ActionEvent event){
                 	   for(int i=0;i<100; i++){
                 		   moveNum++;
-                		   Display.movedRabbits(map,rabbitIcon,moveNum);
+                		   Display.movedRabbits(map,rabbitIcon,moveNum,ml);
                 		   stage.show();
                 		
                 	   }
@@ -174,7 +176,7 @@ package coolguy.maven;
 	        	   public void handle(ActionEvent event) {
 	        		   while (true) {
 	        			   moveNum++;
-                		   Display.movedRabbits(map,rabbitIcon,moveNum);
+                		   Display.movedRabbits(map,rabbitIcon,moveNum,ml);
                 		   stage.show();
                 		   
                 		
@@ -213,7 +215,7 @@ package coolguy.maven;
 	   //methods
 	   // this method updates the screen AFTER  the rabbits have been moved 
 	   // this function also will update the data and stats that are created
-	   public static void movedRabbits(MapTile[][] map, ImageView[][][] rabbitMap,int moveNum){
+	   public static void movedRabbits(MapTile[][] map, ImageView[][][] rabbitMap,int moveNum,RabbitLearner ml){
 		   
 		   for(int row =0;row<map.length;row++){//traversing through rows
 	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
@@ -236,7 +238,7 @@ package coolguy.maven;
 	                	   if(!movingRabbit.isAlive(popTracker)) {
 	                		   rabbitsHere[where] =null;
 	                	   }else {
-	                		   MapTile.moveRabbits(map, movingRabbit, row, column, where);
+	                		   MapTile.moveRabbits(map, movingRabbit, row, column, where,ml);
 	                		   map[row][column].moved(where);
 	                	   } 
 	                   }	
@@ -295,7 +297,7 @@ package coolguy.maven;
 	        //System.out.println("Fox Count: "+ foxCount);
 	        //System.out.println("Average generation: "+(double)cumGen/(double)rabbitCount);
 	        //System.out.println("Average Fertility: "+fertCum/(double)rabbitCount);
-	        System.out.println("Average Color: "+colorCum/(double)rabbitCount);
+	        //System.out.println("Average Color: "+colorCum/(double)rabbitCount);
 	        //System.out.println("Average Size: "+sizeCum/(double)rabbitCount);
 	        //System.out.println("Average Speed: "+speedCum/(double)rabbitCount);
 	    }

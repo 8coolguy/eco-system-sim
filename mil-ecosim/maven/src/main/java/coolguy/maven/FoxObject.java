@@ -3,11 +3,11 @@ package coolguy.maven;
 import javafx.scene.paint.Color;
 
 public class FoxObject extends RabbitObject {
-	final int HUNGER_LIMIT = 15;
+	final int HUNGER_LIMIT = 13;
 	
 	int hunger =0;
-	int sizeFactor =25;
-	double fertilityFactor =.95;
+	int sizeFactor =18;
+	double fertilityFactor =.92;
 	int speedFox =1;
 	int hydrationFactor=5;
 	int yDfactor =5;
@@ -46,21 +46,21 @@ public class FoxObject extends RabbitObject {
 	@Override public boolean isAlive(DynamicPopulationTracker x) {
     	boolean result =true;
     	if(this.health <=0) {
-    		System.out.println("Died from health");
+    		//infoSystem.out.println("Died from health");
     		result= false;
     	}
     	int randLife = (int)(Math.random()*this.ageDeathRange)+this.youngestDeath;
     	
     	if(this.age >randLife) {
-    		System.out.println("Died from Age");
+    		//infoSystem.out.println("Died from Age");
     		result= false;
     	}
     	if(this.hydration==this.hydrationLimit) {
-    		System.out.println("Died from Hydration.");
+    		//infoSystem.out.println("Died from Hydration.");
     		result= false;
     	}
     	if(this.hunger ==this.HUNGER_LIMIT) {
-    		System.out.println("Died from Hunger.");
+    		//infoSystem.out.println("Died from Hunger.");
     		result=false;
     	}
     	return result;
@@ -70,6 +70,7 @@ public class FoxObject extends RabbitObject {
 			RabbitObject hunted = tile.showWhere()[i];
 			if((!(hunted instanceof FoxObject)) && hunted !=null) {
 				if(hunted.getColor() >this.color) {
+					//infoSystem.out.println("Age: "+hunted.getAge());
 					tile.here[i]=null;
 					hunger =0;
 					break;

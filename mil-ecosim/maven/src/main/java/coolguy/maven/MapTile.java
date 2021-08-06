@@ -29,12 +29,12 @@ public class MapTile
     } 
     //mehtods
     //moving the rabbits after getting directions 
-    public static void moveRabbits(MapTile[][] map,RabbitObject movingRabbit,int currentX, int currentY, int where){
+    public static void moveRabbits(MapTile[][] map,RabbitObject movingRabbit,int currentX, int currentY, int where,RabbitLearner ml){
         if(movingRabbit!=null){
             //hello, do nothing
         	boolean moving=true;
            
-            	int direction =movingRabbit.generateDirection(currentX,currentY,map);
+            	int direction =movingRabbit.generateDirection(currentX,currentY,map,ml);
             	
             	//implement speed later
             	int pace =(int)(movingRabbit.getSpeed());
@@ -84,5 +84,19 @@ public class MapTile
             }
         }
     }
+	public int returnBit() {
+		if(Color.RED==this.tileFeature) {
+			return 0;
+		}else if(Color.BLUE==this.tileFeature) {
+			return 1;
+		}else if(Color.GREEN==this.tileFeature) {
+			return 2;
+		}else if(Color.YELLOW==this.tileFeature) {
+			return 3;
+		}
+		else {
+			return 4;
+		}
+	}
 }
 

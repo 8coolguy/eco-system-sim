@@ -27,6 +27,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 
+
 public class DynamicPopulationTracker extends ApplicationFrame  {
 	
 
