@@ -37,6 +37,7 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 	XYSeries ageDeaths;
 	XYSeries heathDeaths;
 	XYSeries deltaPop;
+	XYSeries hunted;
 	XYSeries foxPop;
 	XYSeriesCollection collection;
 	
@@ -45,6 +46,7 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 	public int hydration =0;
 	public int age=0;
 	public int health=0; 
+	public int huntedNum =0;
 	//private ones for this class
 	int lastHydration =0;
 	int lastAge=0;
@@ -103,6 +105,7 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 		this.hydoDeaths =hydrationDeaths;
 		final XYSeries hDeaths =new XYSeries("Death from enviorment");
 		this.heathDeaths =hDeaths;
+		this.hunted =new XYSeries("Hunted by foxes");
 		final XYSeries deltaPop= new XYSeries("Change in Population");
 		this.deltaPop=deltaPop;
 		this.foxPop =new XYSeries("Fox Population");
@@ -112,6 +115,7 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 		collection.addSeries(hydrationDeaths);
 		collection.addSeries(hDeaths);
 		collection.addSeries(ageDeaths);
+		collection.addSeries(this.hunted);
 		collection.addSeries(deltaPop);
 		collection.addSeries(foxPop);
 				
@@ -135,15 +139,18 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 			this.ageDeaths.add((double)moveNum,(double)this.lastAge);
 			this.hydoDeaths.add((double)moveNum,(double)this.lastHydration);
 			this.heathDeaths.add((double)moveNum,(double)this.lastHealth);
+			this.hunted.add((double)moveNum, (double)this.huntedNum);
 			this.deltaPop.add((double)moveNum,(double)(rabbitCount -this.lastRabbitCount));
 			this.foxPop.add((double)moveNum,(double)foxCount);
 			
+			this.huntedNum =0;
 			this.lastRabbitCount=rabbitCount;
 			
 			this.collection.addSeries(this.population);
 			this.collection.addSeries(this.hydoDeaths);
 			this.collection.addSeries(this.heathDeaths);
 			this.collection.addSeries(this.ageDeaths);
+			this.collection.addSeries(this.hunted);
 			this.collection.addSeries(this.deltaPop);
 			this.collection.addSeries(this.foxPop);
 		} catch(Exception i) {

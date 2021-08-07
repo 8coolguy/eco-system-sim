@@ -18,8 +18,9 @@ package coolguy.maven;
 	import javafx.scene.paint.Color; //colored the rectanagles
 	import java.awt.Dimension;//used for screen size
 	import java.awt.Toolkit;//got screen size
+import java.io.File;
 
-	import org.jfree.ui.RefineryUtilities;
+import org.jfree.ui.RefineryUtilities;
 
 	import javafx.event.*;//events
 	
@@ -58,7 +59,7 @@ package coolguy.maven;
 		   		
 		   		stage.setTitle("Ecosystem Simulation");
 		   		
-		   		final RabbitLearner ml =new RabbitLearner();
+		   		final RabbitLearner ml =new RabbitLearner(new File("output.json"));
 	       
 	           Pane baseLayer =new Pane();  //pane for everything
 	         
@@ -80,19 +81,25 @@ package coolguy.maven;
 	           //remember thisRabbitObject x = new SuperRabbitObject(moveNum);
 	           int numOfRabbits =(int)(Math.random()*15)+ROWS*COLUMNS;
 	           int numOfFoxes =(int)(Math.random()*10)+(ROWS*COLUMNS)/5;
+	           numOfFoxes=0;
+	           numOfRabbits =3;
 	           System.out.println("Starting Rabbits: "+numOfRabbits);
 	           System.out.println("Starting Foxes: "+numOfFoxes);
 	           for(int i=0;i<numOfFoxes;i++) {
 	        	   FoxObject fox =new FoxObject(moveNum);
-	        	   int x =(int)(Math.random()*ROWS-1);	
-	        	   int y =(int)(Math.random()*COLUMNS-1);
+	        	   int x =(int)(Math.random()*ROWS);	
+	        	   int y =(int)(Math.random()*COLUMNS);
 	        	   map[x][y].setWhere(fox);
 	           }
+	           //chang this line to init super rabbits or regular rabbits
 	           for(int i=0;i<numOfRabbits;i++) {
-	        	   RabbitObject parent1 =new RabbitObject(moveNum);
-	        	   int x =(int)(Math.random()*ROWS-1);	
-	        	   int y =(int)(Math.random()*COLUMNS-1);
+	        	   SuperRabbitObject parent1 =new SuperRabbitObject(moveNum);
+	        	   int x =(int)(Math.random()*ROWS);	
+	        	   int y =(int)(Math.random()*COLUMNS);
 	        	   map[x][y].setWhere(parent1);
+	        	   if(parent1 instanceof SuperRabbitObject) {
+ 	        		   ((SuperRabbitObject) parent1).oldState =((SuperRabbitObject) parent1).getState(x, y, map);
+ 	        	   }
 	           }
 
 	           
@@ -131,7 +138,11 @@ package coolguy.maven;
 	           
 	           endless.setLayoutY(Y/9);
 	           
+	           final Button quit =new Button("Quit");	        		   
+	        		   
 	           baseLayer.getChildren().addAll(restart);
+	           
+	           baseLayer.getChildren().addAll(quit);
 	           
 	           baseLayer.getChildren().addAll(simulate100Button);
 	           
@@ -141,6 +152,7 @@ package coolguy.maven;
 	           //stage
 	           
 	           stage.show();
+	           
 	           
 	           simulateButton.setOnAction(new EventHandler<ActionEvent>(){
 	                        public void handle( ActionEvent event){
@@ -201,9 +213,19 @@ package coolguy.maven;
 	     	        	   int x =(int)(Math.random()*9);	
 	     	        	   int y =(int)(Math.random()*9);
 	     	        	   map[x][y].setWhere(parent1);
+	     	        	   if(parent1 instanceof SuperRabbitObject) {
+	     	        		   ((SuperRabbitObject) parent1).oldState =((SuperRabbitObject) parent1).getState(x, y, map);
+	     	        	   }
 	     	           }
 	     	          
 
+	        		   
+	        	   }
+	           });
+	           quit.setOnAction(new EventHandler<ActionEvent>(){
+	        	   public void handle(ActionEvent event) {
+	        		   ml.quit();
+	        		   stage.close();
 	        		   
 	        	   }
 	           });
@@ -235,7 +257,12 @@ package coolguy.maven;
 	                	   }
 	                	   //simulating each rabbit
 	                	   movingRabbit.sim1(map[row][column].getTileFeature());
-	                	   if(!movingRabbit.isAlive(popTracker)) {
+	                	   if(movingRabbit instanceof SuperRabbitObject) {
+	                		   SuperRabbitObject temp =(SuperRabbitObject)movingRabbit;	
+	                		   ml.updateStrategy(temp.oldState, temp.getState(row, column, map),temp.lastAction, temp,popTracker);
+	                		   movingRabbit =temp;
+	                	   }
+	                	   if(!movingRabbit.isAlive(popTracker,true)) {
 	                		   rabbitsHere[where] =null;
 	                	   }else {
 	                		   MapTile.moveRabbits(map, movingRabbit, row, column, where,ml);
@@ -250,11 +277,13 @@ package coolguy.maven;
 		   //when displaying the rabbits i can take their stats
 		   int rabbitCount =0;
 		   int cumGen=0;
+		   int mvf=0;
 		   int foxCount=0;
 		   double fertCum =0;
 		   double colorCum=0;
 		   double speedCum =0;
 		   double sizeCum =0;
+		   int totalAge =0;
 	        for(int row =0;row<map.length;row++){//traversing through rows
 	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
 	               RabbitObject[] rabbitsHere=map[row][column].showWhere();
@@ -269,6 +298,8 @@ package coolguy.maven;
 	                			   rabbitMap[row][column][where].setImage(foxPic);
 	                			   foxCount++;
 	                		   }else {
+	                			   if(movingRabbit.getGender().equals("m"))
+	                				   mvf++;
 	                			   rabbitMap[row][column][where].setImage(rabbitPic);
 	                			   rabbitCount++;
 		                		   cumGen+=movingRabbit.gen;
@@ -276,6 +307,7 @@ package coolguy.maven;
 		                		   colorCum+=movingRabbit.getColor();
 		                		   speedCum+=movingRabbit.getSpeed();
 		                		   sizeCum+=movingRabbit.getSize();
+		                		   totalAge+=movingRabbit.getAge();
 	                		   }
 		                		   
 		                	   rabbitMap[row][column][where].setVisible(true);
@@ -292,14 +324,16 @@ package coolguy.maven;
 	            }
 	        }
 	        popTracker.updatePop(moveNum, rabbitCount,foxCount);
-	        System.out.println("-----------------------------------------------------------");
-	        //System.out.println("Rabbit Count: "+ rabbitCount);
-	        //System.out.println("Fox Count: "+ foxCount);
-	        //System.out.println("Average generation: "+(double)cumGen/(double)rabbitCount);
-	        //System.out.println("Average Fertility: "+fertCum/(double)rabbitCount);
-	        //System.out.println("Average Color: "+colorCum/(double)rabbitCount);
-	        //System.out.println("Average Size: "+sizeCum/(double)rabbitCount);
-	        //System.out.println("Average Speed: "+speedCum/(double)rabbitCount);
+	        System.out.println("-----------------------------"+moveNum+"------------------------------");
+	        //infoSystem.out.println("Rabbit Count: "+ rabbitCount);
+	        //infoSystem.out.println("Fox Count: "+ foxCount);
+	        System.out.println("Male vs Females: "+(double)mvf/(double)rabbitCount);
+	        System.out.println("Average generation: "+(double)cumGen/(double)rabbitCount);
+	        System.out.println("Average Fertility: "+fertCum/(double)rabbitCount);
+	        System.out.println("Average Color: "+colorCum/(double)rabbitCount);
+	        System.out.println("Average Size: "+sizeCum/(double)rabbitCount);
+	        System.out.println("Average Speed: "+speedCum/(double)rabbitCount);
+	        System.out.println("Average Age: "+(double)totalAge/(double)rabbitCount);
 	    }
 	   
 	   //placing the rabbits at the start of the program
@@ -394,17 +428,17 @@ package coolguy.maven;
 				   for(int j =0;j<rabbits.length;j++) {
 					   if(rabbits[j] !=null && i !=j ) {
 						   if(!(rabbits[j].getGender().equals(rabbits[i].getGender())) && Math.random() < rabbits[i].getFertility()*rabbits[j].getFertility()) {
-							   RabbitObject child;
+							   SuperRabbitObject child;
 							   FoxObject foxChild;
 							   if(!(rabbits[i] instanceof FoxObject) && !(rabbits[j] instanceof FoxObject) ) {
 								   if(rabbits[i].getGender() == "m") 
 								   {
 	
-									   child =new RabbitObject(rabbits[j],rabbits[i],moveNum);
+									   child =new SuperRabbitObject((SuperRabbitObject)rabbits[j],(SuperRabbitObject)rabbits[i],moveNum);
 										   
 								   }
 								   else {
-									   child =new RabbitObject(rabbits[i],rabbits[j],moveNum);
+									   child =new SuperRabbitObject((SuperRabbitObject)rabbits[i],(SuperRabbitObject)rabbits[j],moveNum);
 									   
 								   }
 								   map[row][column].setWhere(child);

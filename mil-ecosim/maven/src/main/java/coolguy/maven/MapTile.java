@@ -86,17 +86,25 @@ public class MapTile
     }
 	public int returnBit() {
 		if(Color.RED==this.tileFeature) {
-			return 0;
+			return 2;
 		}else if(Color.BLUE==this.tileFeature) {
 			return 1;
 		}else if(Color.GREEN==this.tileFeature) {
-			return 2;
+			return 0;
 		}else if(Color.YELLOW==this.tileFeature) {
 			return 3;
 		}
 		else {
 			return 4;
 		}
+	}
+	public boolean isFoxesHere() {
+		for(RabbitObject r: this.here) {
+			if(r instanceof FoxObject) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
 

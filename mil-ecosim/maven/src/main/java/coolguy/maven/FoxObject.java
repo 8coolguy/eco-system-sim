@@ -43,7 +43,7 @@ public class FoxObject extends RabbitObject {
     	
     	
 	}
-	@Override public boolean isAlive(DynamicPopulationTracker x) {
+	@Override public boolean isAlive(DynamicPopulationTracker x,boolean update) {
     	boolean result =true;
     	if(this.health <=0) {
     		//infoSystem.out.println("Died from health");
@@ -71,7 +71,7 @@ public class FoxObject extends RabbitObject {
 			if((!(hunted instanceof FoxObject)) && hunted !=null) {
 				if(hunted.getColor() >this.color) {
 					//infoSystem.out.println("Age: "+hunted.getAge());
-					tile.here[i]=null;
+					tile.here[i].isEaten();
 					hunger =0;
 					break;
 				}

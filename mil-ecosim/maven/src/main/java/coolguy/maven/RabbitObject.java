@@ -12,6 +12,7 @@ public class  RabbitObject{
 	int hydrationLimit =10;
 	int youngestDeath =8;
 	int ageDeathRange =15;
+	boolean eaten =false;
 	final int BASE =10;
     String gender = new String();//m or f
     //0-10 color trait will  change how attarctive it is to hunt
@@ -170,25 +171,7 @@ public class  RabbitObject{
     		}
     	}
     	else {
-    		
-    		Set<Integer> possibleDirections =new HashSet();
-    		int state=0;
-    		for(int i =0;i<4;i++) {
-    			possibleDirections.add(i);
-    			if(i==0) {
-    				state+=(int)(Math.pow(8, i))*map[x+pace][y].returnBit();
-    			}
-    			else if(i==1) {
-    				state+=(int)(Math.pow(8, i))*map[x][y+pace].returnBit();
-    			}
-    			else if(i==2) {
-    				state+=(int)(Math.pow(8, i))*map[x-pace][y].returnBit();
-    			}else {
-    				state+=(int)(Math.pow(8, i))*map[x][y-pace].returnBit();
-    			}
-    			
-    		}
-    		ml.act(state,possibleDirections);
+
     		return (int)(Math.random()*4);
     	}
     }
@@ -273,27 +256,40 @@ public class  RabbitObject{
     public RabbitObject getDad() {
     	return this.dad; 
     }
-    public boolean isAlive(DynamicPopulationTracker x) {
+    public boolean isAlive(DynamicPopulationTracker x,boolean update) {
     	boolean result =true;
     	if(this.health <=0) {
     		//infoSystem.out.println("Died from health");
-    		x.health++;
+    		if (update)
+    			x.health++;
     		result= false;
     	}
     	int randLife = (int)(Math.random()*this.ageDeathRange)+this.youngestDeath;
     	
     	if(this.age >randLife) {
     		//infoSystem.out.println("Died from Age");
-    		x.age++;
+    		if (update)
+    			x.age++;
     		result= false;
     	}
     	if(this.hydration==this.hydrationLimit) {
-    		x.hydration++;
+    		if(update)
+    			x.hydration++;
+    		
     		//infoSystem.out.println("Died from Hydration.");
     		result= false;
+    	}
+    	if(eaten) {
+    		if(update)
+    			x.huntedNum++;
+    		//infoSystem.out.println("Died from fox");
+    		result=false;
     	}
     	return result;
     	
     
+    }
+    public void isEaten() {
+    	this.eaten =true;
     }
 }
