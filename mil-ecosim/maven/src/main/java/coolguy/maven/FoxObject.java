@@ -69,12 +69,11 @@ public class FoxObject extends RabbitObject {
 		for(int i =0;i<tile.MAX_PER_TILE;i++) {
 			RabbitObject hunted = tile.showWhere()[i];
 			if((!(hunted instanceof FoxObject)) && hunted !=null) {
-				if(hunted.getColor() >this.color) {
+				//if(hunted.getColor() <this.color) {
 					//infoSystem.out.println("Age: "+hunted.getAge());
 					tile.here[i].isEaten();
-					hunger =0;
-					break;
-				}
+					this.hunger =0;
+				//}
 			}
 		}
 	}

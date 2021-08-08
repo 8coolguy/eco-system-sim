@@ -162,7 +162,7 @@ public class SuperRabbitObject extends RabbitObject {
 					state+=(int)(Math.pow(2, 12+it));
 			}
 		}
-		return state;
+		return state;	
     	
 	}
 }

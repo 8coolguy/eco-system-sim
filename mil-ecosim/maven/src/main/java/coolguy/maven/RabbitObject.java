@@ -229,6 +229,7 @@ public class  RabbitObject{
     public void reactMove(Color tile) {
     	if(tile == Color.GREEN) {
     		this.setHealth(greenEffect);
+    		this.deltaHealth=this.greenEffect;
     	} 
     	else if(tile ==Color.RED) {
     		this.setHealth(this.health);

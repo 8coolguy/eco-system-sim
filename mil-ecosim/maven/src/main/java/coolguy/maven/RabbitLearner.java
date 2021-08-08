@@ -12,6 +12,10 @@ import org.apache.commons.io.FileUtils;
 import com.github.chen0040.rl.learning.qlearn.QLearner;
 import com.github.chen0040.rl.utils.IndexValue;
 public class RabbitLearner {
+	//Article on what I thought I would be doing
+	//https://towardsdatascience.com/simple-reinforcement-learning-q-learning-fcddc4b6fe56
+	//reference to the class that package that someone built for Qlearning:
+	//https://github.com/chen0040/java-reinforcement-learning
 	// if the there is no box then that box is -1
 	final public int STATE_COUNT =16;
 	int action_count=4;
@@ -33,37 +37,31 @@ public class RabbitLearner {
 		ArrayList<Integer> possibleMovesList =new ArrayList<Integer>(possibleMoves);
 		
 		IndexValue i =agent.selectAction(stateNum, possibleMoves);
-		//infoSystem.out.println("Index/Value: "+i.getIndex()+"/"+i.getValue());
-		if(i.getValue() <0 ) {
+		if(i.getValue()<0 ) {
+			System.out.println("^^^Exploring^^^");
 			return possibleMovesList.get((int)(Math.random()*possibleMovesList.size()));
 		}
-		
+		System.out.println("***Exploiting***");
 		return i.getIndex() ;
-		
-		
-		 
 	}
 	public void updateStrategy(int oldState,int newState,int action,SuperRabbitObject rabbit,DynamicPopulationTracker x) {
-		System.out.println("OldState: "+oldState+" New State: "+newState);
+		//infoSystem.out.println("OldState: "+oldState+" New State: "+newState);
+		//the reward needs to be based only on the action id eaten pretty much,color,hydration
 		double reward=0;
-		if(!(rabbit.isAlive(x, false))) {
-			reward -=35.0;
-		}
 		if(rabbit.hydration ==0) {
-			reward+=25;
-		}else {
-			reward-=rabbit.hydration*2;
+			reward+=50;
 		}
-		if(rabbit.deltaHealth<0) {
-			reward+=20;
+		if(rabbit.deltaHealth == rabbit.greenEffect) {
+			reward+=75;
 		}else {
-			reward-=rabbit.deltaHealth;
+			reward-=3*rabbit.deltaHealth;
 		}
-		reward+=1;
+		if(rabbit.eaten) {
+			reward-=100;
+		}
+		
 		System.out.println("Reward: "+reward);
 		this.agent.update(oldState, action, newState, reward);
-		
-		
 	}
 	public void quit() {
 	      try {

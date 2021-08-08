@@ -145,14 +145,7 @@ public class DynamicPopulationTracker extends ApplicationFrame  {
 			
 			this.huntedNum =0;
 			this.lastRabbitCount=rabbitCount;
-			
-			this.collection.addSeries(this.population);
-			this.collection.addSeries(this.hydoDeaths);
-			this.collection.addSeries(this.heathDeaths);
-			this.collection.addSeries(this.ageDeaths);
-			this.collection.addSeries(this.hunted);
-			this.collection.addSeries(this.deltaPop);
-			this.collection.addSeries(this.foxPop);
+
 		} catch(Exception i) {
 			//infoSystem.out.println("Weird Error");
 			}

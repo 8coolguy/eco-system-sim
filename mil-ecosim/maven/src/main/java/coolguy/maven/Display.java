@@ -30,8 +30,8 @@ import org.jfree.ui.RefineryUtilities;
 	   Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();//set to screen size
 	   final int X=screenSize.width; //screensize variables
 	   final int Y=screenSize.height;
-	   final static int ROWS =20;//rows and columns for the map 
-	   final static int COLUMNS =20;
+	   final static int ROWS =10;//rows and columns for the map 
+	   final static int COLUMNS =10;
 	   int sizeX =X/ROWS;
 	   int sizeY =Y/COLUMNS;
 	   
@@ -41,6 +41,7 @@ import org.jfree.ui.RefineryUtilities;
 	  
 	   
 	   static DynamicPopulationTracker popTracker;
+	   static DynamicStatsTracker statTracker;
 	   public static void main(String[]args){
 		   
 	       launch(args);//creation of map with for loop and multi dimensional array   
@@ -55,6 +56,10 @@ import org.jfree.ui.RefineryUtilities;
 		   		popTracker =new DynamicPopulationTracker("Population Tracker");
 		   		popTracker.pack();
 		   		popTracker.setVisible(true);
+		   		statTracker=new DynamicStatsTracker("Traits Tracker");
+		   		statTracker.pack();
+		   		statTracker.setVisible(true);
+		   		
 		   		RefineryUtilities.centerFrameOnScreen(popTracker);
 		   		
 		   		stage.setTitle("Ecosystem Simulation");
@@ -81,8 +86,6 @@ import org.jfree.ui.RefineryUtilities;
 	           //remember thisRabbitObject x = new SuperRabbitObject(moveNum);
 	           int numOfRabbits =(int)(Math.random()*15)+ROWS*COLUMNS;
 	           int numOfFoxes =(int)(Math.random()*10)+(ROWS*COLUMNS)/5;
-	           numOfFoxes=0;
-	           numOfRabbits =3;
 	           System.out.println("Starting Rabbits: "+numOfRabbits);
 	           System.out.println("Starting Foxes: "+numOfFoxes);
 	           for(int i=0;i<numOfFoxes;i++) {
@@ -209,7 +212,7 @@ import org.jfree.ui.RefineryUtilities;
 	    	        	   map[x][y].setWhere(fox);
 	    	           }
 	     	           for(int i=0;i<numOfRabbits;i++) {
-	     	        	   RabbitObject parent1 =new RabbitObject(moveNum);
+	     	        	   SuperRabbitObject parent1 =new SuperRabbitObject(moveNum);
 	     	        	   int x =(int)(Math.random()*9);	
 	     	        	   int y =(int)(Math.random()*9);
 	     	        	   map[x][y].setWhere(parent1);
@@ -255,6 +258,8 @@ import org.jfree.ui.RefineryUtilities;
 	                		   temp.eat(map[row][column]);
 	                		   movingRabbit =temp;
 	                	   }
+	                	   if(movingRabbit.eaten)
+	                		   System.out.println(movingRabbit.eaten);
 	                	   //simulating each rabbit
 	                	   movingRabbit.sim1(map[row][column].getTileFeature());
 	                	   if(movingRabbit instanceof SuperRabbitObject) {
@@ -284,6 +289,7 @@ import org.jfree.ui.RefineryUtilities;
 		   double speedCum =0;
 		   double sizeCum =0;
 		   int totalAge =0;
+		   double foxColor=0;
 	        for(int row =0;row<map.length;row++){//traversing through rows
 	           for(int column=0;column<map[row].length;column++){//traversing through cloumns
 	               RabbitObject[] rabbitsHere=map[row][column].showWhere();
@@ -297,6 +303,7 @@ import org.jfree.ui.RefineryUtilities;
 	                		   if(movingRabbit instanceof FoxObject) {
 	                			   rabbitMap[row][column][where].setImage(foxPic);
 	                			   foxCount++;
+	                			   foxColor+=movingRabbit.getColor();
 	                		   }else {
 	                			   if(movingRabbit.getGender().equals("m"))
 	                				   mvf++;
@@ -324,15 +331,17 @@ import org.jfree.ui.RefineryUtilities;
 	            }
 	        }
 	        popTracker.updatePop(moveNum, rabbitCount,foxCount);
+	        statTracker.updateStats(moveNum, fertCum/(double)rabbitCount, colorCum/(double)rabbitCount, (double)mvf/(double)rabbitCount, (double)totalAge/(double)rabbitCount, sizeCum/(double)rabbitCount,speedCum/(double)rabbitCount);
 	        System.out.println("-----------------------------"+moveNum+"------------------------------");
 	        //infoSystem.out.println("Rabbit Count: "+ rabbitCount);
 	        //infoSystem.out.println("Fox Count: "+ foxCount);
-	        System.out.println("Male vs Females: "+(double)mvf/(double)rabbitCount);
+	        //infoSystem.out.println("Male vs Females: "+(double)mvf/(double)rabbitCount);
 	        System.out.println("Average generation: "+(double)cumGen/(double)rabbitCount);
-	        System.out.println("Average Fertility: "+fertCum/(double)rabbitCount);
-	        System.out.println("Average Color: "+colorCum/(double)rabbitCount);
-	        System.out.println("Average Size: "+sizeCum/(double)rabbitCount);
-	        System.out.println("Average Speed: "+speedCum/(double)rabbitCount);
+	        //info System.out.println("Average Fertility: "+fertCum/(double)rabbitCount);
+	        //infoSystem.out.println("Average Color: "+colorCum/(double)rabbitCount);
+	        //infoSystem.out.println("Average Fox Color: "+foxColor/(double)foxCount);
+	        //infoSystem.out.println("Average Size: "+sizeCum/(double)rabbitCount);
+	        //infoSystem.out.println("Average Speed: "+speedCum/(double)rabbitCount);
 	        System.out.println("Average Age: "+(double)totalAge/(double)rabbitCount);
 	    }
 	   
@@ -442,7 +451,7 @@ import org.jfree.ui.RefineryUtilities;
 									   
 								   }
 								   map[row][column].setWhere(child);
-								   //infoSystem.out.println("New Rabbit Child");
+								   System.out.println("New Rabbit Child");
 								   return;
 							   }else if(rabbits[i] instanceof FoxObject && rabbits[j] instanceof FoxObject) {
 								   FoxObject p1=(FoxObject)rabbits[i];
