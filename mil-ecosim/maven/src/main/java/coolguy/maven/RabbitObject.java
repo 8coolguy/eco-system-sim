@@ -15,14 +15,14 @@ public class  RabbitObject{
 	boolean eaten =false;
 	final int BASE =10;
     String gender = new String();//m or f
-    //0-10 color trait will  change how attarctive it is to hunt
-    int health=7;//0-100 starting health goes here
+    //0-1 color trait will  change how attarctive it is to hunt
+    int health=7;//starting health goes here
     int deltaHealth=0;
     int age;//0-24  1 per turn\
     //inherited properties form parents 
     double color;//0-1
     double fertility;//0-1
-    double size;// will change how  attractive it is to hunt 1,small,2 medium,3 large
+    double size;// will change how  much health it can have
     double speed; //1-3 1space 2 space 3 spaces 
     //stats props 
     int turnsmoved;

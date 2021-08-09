@@ -30,8 +30,8 @@ import org.jfree.ui.RefineryUtilities;
 	   Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();//set to screen size
 	   final int X=screenSize.width; //screensize variables
 	   final int Y=screenSize.height;
-	   final static int ROWS =10;//rows and columns for the map 
-	   final static int COLUMNS =10;
+	   final static int ROWS =20;//rows and columns for the map 
+	   final static int COLUMNS =20;
 	   int sizeX =X/ROWS;
 	   int sizeY =Y/COLUMNS;
 	   
@@ -88,6 +88,8 @@ import org.jfree.ui.RefineryUtilities;
 	           int numOfFoxes =(int)(Math.random()*10)+(ROWS*COLUMNS)/5;
 	           System.out.println("Starting Rabbits: "+numOfRabbits);
 	           System.out.println("Starting Foxes: "+numOfFoxes);
+	           //numOfFoxes =0;
+	           //numOfRabbits =0;
 	           for(int i=0;i<numOfFoxes;i++) {
 	        	   FoxObject fox =new FoxObject(moveNum);
 	        	   int x =(int)(Math.random()*ROWS);	
@@ -96,7 +98,7 @@ import org.jfree.ui.RefineryUtilities;
 	           }
 	           //chang this line to init super rabbits or regular rabbits
 	           for(int i=0;i<numOfRabbits;i++) {
-	        	   SuperRabbitObject parent1 =new SuperRabbitObject(moveNum);
+	        	   SuperRabbitObject parent1 =new SuperRabbitObject(moveNum);//change for smart rabbits
 	        	   int x =(int)(Math.random()*ROWS);	
 	        	   int y =(int)(Math.random()*COLUMNS);
 	        	   map[x][y].setWhere(parent1);
@@ -121,7 +123,9 @@ import org.jfree.ui.RefineryUtilities;
 	           //initilaize the button
 	           final Button restart =new Button("Restart Sim");
 	           
-	           restart.setLayoutX(X/2); 
+	           restart.setLayoutX(X/2 + X/10); 
+	           
+	           restart.setLayoutY(Y/20);
 	           
 	           final Button simulateButton =new Button("Simulate");
 	           
@@ -131,17 +135,21 @@ import org.jfree.ui.RefineryUtilities;
 	           
 	           final Button simulate100Button =new Button("Simulate 100 times");
 	           
-	           simulate100Button.setLayoutX(X/2);
+	           simulate100Button.setLayoutX(X/2 -X/10);
 	           
-	           simulate100Button.setLayoutY(Y/13);
+	           simulate100Button.setLayoutY(Y/20);
 	           
 	           final Button endless =new Button("Endless");
 	           
-	           endless.setLayoutX(X/2);
+	           endless.setLayoutX(X/2 +2*X /10);
 	           
-	           endless.setLayoutY(Y/9);
+	           endless.setLayoutY(Y/20);
 	           
-	           final Button quit =new Button("Quit");	        		   
+	           final Button quit =new Button("Quit");
+	           
+	           quit.setLayoutX(X/2 - 2*X /10);
+	           
+	           quit.setLayoutY(Y/20);
 	        		   
 	           baseLayer.getChildren().addAll(restart);
 	           
@@ -201,8 +209,8 @@ import org.jfree.ui.RefineryUtilities;
 	           restart.setOnAction(new EventHandler<ActionEvent>(){
 	        	   public void handle(ActionEvent event) {
 	        		   //restarts and put more rabbits on board
-	        		   int numOfFoxes =(int)(Math.random()*5)+3;
-	        		   int numOfRabbits =(int)(Math.random()*15)+40;
+	        		   int numOfFoxes =(int)(Math.random()*5)+(ROWS*COLUMNS)/5;
+	        		   int numOfRabbits =(int)(Math.random()*15)+ROWS*COLUMNS;
 	    	           System.out.println("Restarted Rabbits: "+numOfRabbits);
 	    	           System.out.println("Restarted Foxes: "+numOfFoxes);
 	    	           for(int i=0;i<numOfFoxes;i++) {
@@ -213,8 +221,8 @@ import org.jfree.ui.RefineryUtilities;
 	    	           }
 	     	           for(int i=0;i<numOfRabbits;i++) {
 	     	        	   SuperRabbitObject parent1 =new SuperRabbitObject(moveNum);
-	     	        	   int x =(int)(Math.random()*9);	
-	     	        	   int y =(int)(Math.random()*9);
+	     	        	   int x =(int)(Math.random()*ROWS);	
+	     	        	   int y =(int)(Math.random()*COLUMNS-1);
 	     	        	   map[x][y].setWhere(parent1);
 	     	        	   if(parent1 instanceof SuperRabbitObject) {
 	     	        		   ((SuperRabbitObject) parent1).oldState =((SuperRabbitObject) parent1).getState(x, y, map);
@@ -229,6 +237,7 @@ import org.jfree.ui.RefineryUtilities;
 	        	   public void handle(ActionEvent event) {
 	        		   ml.quit();
 	        		   stage.close();
+	        		   System.exit(0);
 	        		   
 	        	   }
 	           });
