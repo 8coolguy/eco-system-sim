@@ -1,7 +1,7 @@
 
 # ***Not so smart Smart Rabbits***   
 Hello. This is a simulation I created using Javafx to help show how rabbits reacted in a ecosystem with varied terrain and sometimes a predeator. 
-## Inspriation:   
+## Inspiration:   
 My inspiration for this project came from watching a [youtube video](https://www.youtube.com/watch?v=r_It_X7v-1E&t=152s) where something similar was done in Unity3d that simulated a species and watched the effect it had on the rabbit population. Although my simulation does not used 3d assests and rendering, my simulation is more sophisticated for the genetic traits that are passed down from generation to generation.
 
 ## Initial Steps   
